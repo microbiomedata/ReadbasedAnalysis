@@ -46,13 +46,14 @@ task profilerCentrifuge {
 
     command <<<
         set -euo pipefail
-
+        conda activate centrifuge
         centrifuge -x ${DB} \
                    -p ${CPU} \
                    -U ${sep=',' READS} \
                    -S ${PREFIX}.classification.tsv \
                    --report-file ${PREFIX}.report.tsv
-        
+        conda deactivate        
+
         ktImportTaxonomy -m 5 -t 2 -o ${PREFIX}.krona.html ${PREFIX}.report.tsv
     >>>
     output {
@@ -84,13 +85,14 @@ task profilerKraken2 {
 
     command <<<
         set -euo pipefail
-        
+        conda activate kraken
         kraken2 ${true="--paired" false='' PAIRED} \
                 --threads ${CPU} \
                 --db ${DB} \
                 --output ${PREFIX}.classification.tsv \
                 --report ${PREFIX}.report.tsv \
                 ${sep=' ' READS}
+        conda deactivate        
 
         ktImportTaxonomy -m 3 -t 5 -o ${PREFIX}.krona.html ${PREFIX}.report.tsv
     >>>
