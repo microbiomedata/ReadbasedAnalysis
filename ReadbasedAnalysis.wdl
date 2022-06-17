@@ -8,7 +8,7 @@ workflow ReadbasedAnalysis {
     String prefix
     String? outdir
     Boolean? paired = false
-    String? docker = "microbiomedata/nmdc_taxa_profilers:1.0.3"
+    String? docker = "microbiomedata/nmdc_taxa_profilers:1.0.2p1"
 
     if (enabled_tools["gottcha2"] == true) {
         call tasks.profilerGottcha2 {
