@@ -3,16 +3,28 @@ import "ReadbasedAnalysisTasks.wdl" as tasks
 workflow ReadbasedAnalysis {
     Map[String, Boolean] enabled_tools
     Map[String, String] db
-    Array[File] reads
-    Int cpu
+    Int cpu = 8
+    String input_file
+    String proj
+    String resource
+    String informed_by
+    String?  git_url="https://github.com/microbiomedata/mg_annotation/releases/tag/0.1"
+    String?  url_root="https://data.microbiomedata.org/data/"
     String prefix
-    String outdir
+    String? outdir
     Boolean? paired = false
-    String? docker = "microbiomedata/nmdc_taxa_profilers:1.0.2"
+    String bbtools_container="microbiomedata/bbtools:38.96"
+    String? docker = "microbiomedata/nmdc_taxa_profilers:1.0.2p1"
+
+    call stage {
+        input:
+        container=bbtools_container,
+        input_file=input_file
+    }
 
     if (enabled_tools["gottcha2"] == true) {
         call tasks.profilerGottcha2 {
-            input: READS = reads,
+            input: READS = stage.reads,
                    DB = db["gottcha2"],
                    PREFIX = prefix,
                    CPU = cpu,
@@ -22,7 +34,7 @@ workflow ReadbasedAnalysis {
 
     if (enabled_tools["kraken2"] == true) {
         call tasks.profilerKraken2 {
-            input: READS = reads,
+            input: READS = stage.reads,
                    PAIRED = paired,
                    DB = db["kraken2"],
                    PREFIX = prefix,
@@ -33,7 +45,7 @@ workflow ReadbasedAnalysis {
 
     if (enabled_tools["centrifuge"] == true) {
         call tasks.profilerCentrifuge {
-            input: READS = reads,
+            input: READS = stage.reads,
                    DB = db["centrifuge"],
                    PREFIX = prefix,
                    CPU = cpu,
@@ -41,43 +53,158 @@ workflow ReadbasedAnalysis {
         }
     }
 
-#    call tasks.generateSummaryJson {
-#        input: TSV_META_JSON = [profilerGottcha2.results, profilerCentrifuge.results, profilerKraken2.results],
-#               PREFIX = prefix,
-#               OUTPATH = outdir,
-#               DOCKER = docker
-#    }
-    call make_outputs {
-        input: gottcha2_report_tsv = profilerGottcha2.report_tsv,
-               gottcha2_full_tsv = profilerGottcha2.full_tsv,
-               gottcha2_krona_html = profilerGottcha2.krona_html,
-               centrifuge_classification_tsv = profilerCentrifuge.classification_tsv,
-               centrifuge_report_tsv = profilerCentrifuge.report_tsv,
-               centrifuge_krona_html = profilerCentrifuge.krona_html,
-               kraken2_classification_tsv = profilerKraken2.classification_tsv,
-               kraken2_report_tsv = profilerKraken2.report_tsv,
-               kraken2_krona_html = profilerKraken2.krona_html,
-               outdir = outdir,
-               container = docker
-    }
+    call finish_reads {
+            input:
+            proj=proj,
+            start=stage.start,
+            git_url=git_url,
+            url_root=url_root,
+            input_file=input_file,
+            container="microbiomedata/workflowmeta:1.1.0",
+            informed_by=informed_by,
+            resource=resource,
+            gottcha2_report_tsv=profilerGottcha2.report_tsv,
+            gottcha2_full_tsv=profilerGottcha2.full_tsv,
+            gottcha2_krona_html=profilerGottcha2.krona_html,
+            centrifuge_classification_tsv=profilerCentrifuge.classification_tsv,
+            centrifuge_report_tsv=profilerCentrifuge.report_tsv,
+            centrifuge_krona_html=profilerCentrifuge.krona_html,
+            kraken2_classification_tsv=profilerKraken2.classification_tsv,
+            kraken2_report_tsv=profilerKraken2.report_tsv,
+            kraken2_krona_html=profilerKraken2.krona_html
+        }
 
     output {
-        File? gottcha2_report_tsv = profilerGottcha2.report_tsv
-        File? gottcha2_full_tsv = profilerGottcha2.full_tsv
-        File? gottcha2_krona_html = profilerGottcha2.krona_html
-        File? centrifuge_classification_tsv = profilerCentrifuge.classification_tsv
-        File? centrifuge_report_tsv = profilerCentrifuge.report_tsv
-        File? centrifuge_krona_html = profilerCentrifuge.krona_html
-        File? kraken2_classification_tsv = profilerKraken2.classification_tsv
-        File? kraken2_report_tsv = profilerKraken2.report_tsv
-        File? kraken2_krona_html = profilerKraken2.krona_html
-#        File summary_json = generateSummaryJson.summary_json
+        File final_gottcha2_report_tsv = finish_reads.g2_report_tsv
+        File final_gottcha2_full_tsv = finish_reads.g2_full_tsv
+        File final_gottcha2_krona_html = finish_reads.g2_krona_html
+        File final_centrifuge_classification_tsv = finish_reads.cent_classification_tsv
+        File final_centrifuge_report_tsv = finish_reads.cent_report_tsv
+        File final_centrifuge_krona_html = finish_reads.cent_krona_html
+        File final_kraken2_classification_tsv = finish_reads.kr_classification_tsv
+        File final_kraken2_report_tsv = finish_reads.kr_report_tsv
+        File final_kraken2_krona_html = finish_reads.kr_krona_html
+        File reads_objects = finish_reads.objects
     }
 
     meta {
         author: "Po-E Li, B10, LANL"
         email: "po-e@lanl.gov"
         version: "1.0.2"
+    }
+}
+
+
+task stage {
+   String container
+   String input_file
+   String? memory = "4G"
+   String target = "staged.fastq.gz"
+   String output1 = "input.left.fastq.gz"
+   String output2 = "input.right.fastq.gz"
+
+   command <<<
+       set -e
+       if [ $( echo ${input_file}|egrep -c "https*:") -gt 0 ] ; then
+           wget ${input_file} -O ${target}
+       else
+           ln ${input_file} ${target} || cp ${input_file} ${target}
+       fi
+
+        reformat.sh -Xmx${default="10G" memory} in=${target} out1=${output1} out2=${output2}    
+       # Capture the start time
+       date --iso-8601=seconds > start.txt
+
+   >>>
+
+   output{
+      Array[File] reads = [output1, output2]
+      String start = read_string("start.txt")
+   }
+   runtime {
+     cpu:  2
+     maxRetries: 1
+     docker: container
+   }
+}
+
+task finish_reads {
+    String input_file
+    String container
+    String git_url
+    String informed_by
+    String proj
+    String prefix=sub(proj, ":", "_")
+    String resource
+    String url_root
+    String start
+    File gottcha2_report_tsv
+    File gottcha2_full_tsv
+    File gottcha2_krona_html
+    File centrifuge_classification_tsv
+    File centrifuge_report_tsv
+    File centrifuge_krona_html
+    File kraken2_classification_tsv
+    File kraken2_report_tsv
+    File kraken2_krona_html
+
+    command <<<
+
+        set -e
+        end=`date --iso-8601=seconds`
+        # Set names
+        ln ${gottcha2_report_tsv} ${prefix}_gottcha2_report.tsv
+        ln ${gottcha2_full_tsv} ${prefix}_gottcha2_full_tsv
+        ln ${gottcha2_krona_html} ${prefix}_gottcha2_krona.html
+        ln ${centrifuge_classification_tsv} ${prefix}_centrifuge_classification.tsv
+        ln ${centrifuge_report_tsv} ${prefix}_centrifuge_report.tsv
+        ln ${centrifuge_krona_html} ${prefix}_centrifuge_krona.html
+        ln ${kraken2_classification_tsv} ${prefix}_kraken2_classification.tsv
+        ln ${kraken2_report_tsv} ${prefix}_kraken2_report.tsv
+        ln ${kraken2_krona_html} ${prefix}_kraken2_krona.html
+
+        /scripts/generate_object_json.py \ 
+            --type "nmdc:ReadBasedAnalysisActivity" \
+            --set read_based_taxonomy_analysis_activity_set \
+            --part ${proj} \
+            -p "name=ReadBased Analysis Activity for ${proj}" \
+                was_informed_by=${informed_by} \
+                started_at_time=${start} \
+                ended_at_time=$end \
+                execution_resource=${resource} \
+                git_url=${git_url} \ 
+            --url ${url_root}${proj}/ReadbasedAnalysis/ \
+            --inputs ${input_file} \
+            --outputs \
+            ${prefix}_gottcha2_report.tsv "GOTTCHA2 classification report file" "GOTTCHA2 Classification Report" \
+            ${prefix}_gottcha2_full_tsv "GOTTCHA2 report file" "GOTTCHA2 Report Full" \
+            ${prefix}_gottcha2_krona.html "GOTTCHA2 krona plot HTML file" "GOTTCHA2 Krona Plot" \
+            ${prefix}_centrifuge_classification.tsv "Centrifuge output read classification file" "Centrifuge Taxonomic Classification" \
+            ${prefix}_centrifuge_report.tsv "Centrifuge Classification Report" "Centrifuge output report file" \
+            ${prefix}_centrifuge_krona.html "Centrifug krona plot HTML file" "Centrifuge Krona Plot" \
+            ${prefix}_kraken2_classification.tsv "Kraken2 output read classification file" "Kraken2 Taxonomic Classification" \
+            ${prefix}_kraken2_report.tsv "Kraken2 output report file" "Kraken2 Classification Report" \
+            ${prefix}_kraken2_krona.html "Kraken2 output report file" "Kraken2 Classification Report"
+    >>>
+
+    output {
+
+       File objects="objects.json"
+       File g2_report_tsv="${prefix}_gottcha2_report.tsv"
+       File g2_full_tsv="${prefix}_gottcha2_full_tsv"
+       File g2_krona_html="${prefix}_gottcha2_krona.html"
+       File cent_classification_tsv="${prefix}_centrifuge_classification.tsv"
+       File cent_report_tsv="${prefix}_centrifuge_report.tsv"
+       File cent_krona_html="${prefix}_centrifuge_krona.html"
+       File kr_classification_tsv="${prefix}_kraken2_classification.tsv"
+       File kr_report_tsv="${prefix}_kraken2_report.tsv"
+       File kr_krona_html="${prefix}_kraken2_krona.html"
+    }
+
+    runtime {
+        docker: container
+        memory: "1 GiB"
+        cpu:  1
     }
 }
 
@@ -96,6 +223,7 @@ task make_outputs{
     String container
 
     command<<<
+
         mkdir -p ${outdir}/gottcha2
         cp ${gottcha2_report_tsv} ${gottcha2_full_tsv} ${gottcha2_krona_html} \
            ${outdir}/gottcha2
