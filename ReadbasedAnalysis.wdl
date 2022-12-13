@@ -60,7 +60,7 @@ workflow ReadbasedAnalysis {
             git_url=git_url,
             url_root=url_root,
             input_file=input_file,
-            container="microbiomedata/workflowmeta:1.1.0",
+            container="microbiomedata/workflowmeta:1.1.1",
             informed_by=informed_by,
             resource=resource,
             gottcha2_report_tsv=profilerGottcha2.report_tsv,
@@ -173,18 +173,19 @@ task finish_reads {
                 ended_at_time=$end \
                 execution_resource=${resource} \
                 git_url=${git_url} \ 
+                version="v1.0.2-beta" \
             --url ${url_root}${proj}/ReadbasedAnalysis/ \
             --inputs ${input_file} \
             --outputs \
-            ${prefix}_gottcha2_report.tsv "GOTTCHA2 classification report file" "GOTTCHA2 Classification Report" \
-            ${prefix}_gottcha2_full_tsv "GOTTCHA2 report file" "GOTTCHA2 Report Full" \
-            ${prefix}_gottcha2_krona.html "GOTTCHA2 krona plot HTML file" "GOTTCHA2 Krona Plot" \
-            ${prefix}_centrifuge_classification.tsv "Centrifuge output read classification file" "Centrifuge Taxonomic Classification" \
-            ${prefix}_centrifuge_report.tsv "Centrifuge Classification Report" "Centrifuge output report file" \
-            ${prefix}_centrifuge_krona.html "Centrifug krona plot HTML file" "Centrifuge Krona Plot" \
-            ${prefix}_kraken2_classification.tsv "Kraken2 output read classification file" "Kraken2 Taxonomic Classification" \
-            ${prefix}_kraken2_report.tsv "Kraken2 output report file" "Kraken2 Classification Report" \
-            ${prefix}_kraken2_krona.html "Kraken2 output report file" "Kraken2 Classification Report"
+            ${prefix}_gottcha2_report.tsv "GOTTCHA2 classification report file" "GOTTCHA2 Classification Report" "GOTTCHA2 Classification for ${proj}"\
+            ${prefix}_gottcha2_full_tsv "GOTTCHA2 report file" "GOTTCHA2 Report Full" "GOTTCHA2 Full Report for ${proj}" \
+            ${prefix}_gottcha2_krona.html "GOTTCHA2 krona plot HTML file" "GOTTCHA2 Krona Plot" "GOTTCHA2 Krona for ${proj}"\
+            ${prefix}_centrifuge_classification.tsv "Centrifuge output read classification file" "Centrifuge Taxonomic Classification" "Centrifuge Classification for ${proj}"\
+            ${prefix}_centrifuge_report.tsv "Centrifuge Classification Report" "Centrifuge output report file" "Centrifuge Report for ${proj}"\
+            ${prefix}_centrifuge_krona.html "Centrifug krona plot HTML file" "Centrifuge Krona Plot" "Centrifuge Krona for ${proj}"\
+            ${prefix}_kraken2_classification.tsv "Kraken2 output read classification file" "Kraken2 Taxonomic Classification" "Kraken2 Classification for ${proj}" \
+            ${prefix}_kraken2_report.tsv "Kraken2 output report file" "Kraken2 Classification Report" "Kraken2 Report for ${proj}" \
+            ${prefix}_kraken2_krona.html "Kraken2 Krona plot HTML file" "Kraken2 Krona Plot" "Kraken2 Krona for ${proj}"
     >>>
 
     output {
