@@ -21,6 +21,7 @@ def output2json(meta):
         tool = tsvmeta['tool']
         idx_col = 'taxRank'
         read_cnt_col = 'numReads'
+        df = pd.DataFrame()
 
         result = {
             'classifiedReadCount': 0,
