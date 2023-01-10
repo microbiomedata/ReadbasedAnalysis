@@ -163,7 +163,7 @@ task finish_reads {
         ln ${kraken2_report_tsv} ${prefix}_kraken2_report.tsv
         ln ${kraken2_krona_html} ${prefix}_kraken2_krona.html
 
-        /scripts/generate_object_json.py \ 
+        /scripts/generate_object_json.py \
             --type "nmdc:ReadBasedAnalysisActivity" \
             --set read_based_taxonomy_analysis_activity_set \
             --part ${proj} \
@@ -171,8 +171,8 @@ task finish_reads {
                 was_informed_by=${informed_by} \
                 started_at_time=${start} \
                 ended_at_time=$end \
-                execution_resource=${resource} \
-                git_url=${git_url} \ 
+                execution_resource="${resource}" \
+                git_url=${git_url} \
                 version="v1.0.2-beta" \
             --url ${url_root}${proj}/ReadbasedAnalysis/ \
             --inputs ${input_file} \

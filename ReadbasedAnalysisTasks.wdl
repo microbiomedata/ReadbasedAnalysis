@@ -28,7 +28,7 @@ task profilerGottcha2 {
         cpu: CPU
         node: 1
         nwpn: 1
-        mem: "45G"
+        memory: "45G"
         time: "04:00:00"
     }
     meta {
@@ -65,7 +65,7 @@ task profilerCentrifuge {
         cpu: CPU
         node: 1
         nwpn: 1
-        mem: "45G"
+        memory: "45G"
         time: "04:00:00"
     }
     meta {
@@ -104,7 +104,7 @@ task profilerKraken2 {
         cpu: CPU
         node: 1
         nwpn: 1
-        mem: "45G"
+        memory: "45G"
         time: "04:00:00"
     }
     meta {
@@ -128,7 +128,7 @@ task generateSummaryJson {
         docker: DOCKER
         node: 1
         nwpn: 1
-        mem: "45G"
+        memory: "45G"
         time: "04:00:00"
     }
     meta {
