@@ -2,11 +2,12 @@
   "ReadbasedAnalysis.enabled_tools": {
     "gottcha2": true,
     "kraken2": true,
-    "centrifuge": true
+    "centrifuge": true,
+    "singlem": false
   },
   "ReadbasedAnalysis.db": {
     "gottcha2": "/global/cfs/projectdirs/m3408/aim2/database/gottcha2/RefSeq-r90.cg.BacteriaArchaeaViruses.species.fna",
-    "kraken2": "/global/cfs/projectdirs/m3408/aim2/database/kraken2/",
+    "kraken2": "/global/cfs/projectdirs/m3408/aim2/database/kraken2",
     "centrifuge": "/global/cfs/projectdirs/m3408/aim2/database/centrifuge/p_compressed"
   },
   "ReadbasedAnalysis.reads": [
@@ -16,5 +17,6 @@
   "ReadbasedAnalysis.paired": true,
   "ReadbasedAnalysis.prefix": "SRR7877884",
   "ReadbasedAnalysis.outdir": "/global/cfs/projectdirs/m3408/aim2/metagenome/ReadbasedAnalysis/SRR7877884",
-  "ReadbasedAnalysis.cpu": 8
+  "ReadbasedAnalysis.cpu": 8,
+  "ReadbasedAnalysis.docker": "microbiomedata/nmdc_taxa_profilers:1.0.4"
 }

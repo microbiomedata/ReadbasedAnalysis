@@ -2,7 +2,6 @@
 import os
 import json
 import pandas as pd
-import numpy as np
 import click
 
 @click.command()
@@ -10,7 +9,6 @@ import click
 
 def output2json(meta):
     """ Simple converter that takes TSV files to generate a summary JSON. """
-    df = pd.DataFrame()
     out_dict = {}
 
     tsvfile_lod = json.load(meta)

@@ -6,9 +6,9 @@ workflow ReadbasedAnalysis {
     Array[File] reads
     Int cpu
     String prefix
-    String outdir
+    String? outdir
     Boolean? paired = false
-    String? docker = "microbiomedata/nmdc_taxa_profilers:1.0.3"
+    String? docker = "microbiomedata/nmdc_taxa_profilers:1.0.4"
 
     if (enabled_tools["gottcha2"] == true) {
         call tasks.profilerGottcha2 {
@@ -41,24 +41,51 @@ workflow ReadbasedAnalysis {
         }
     }
 
+    if (enabled_tools["singlem"] == true) {
+        call tasks.profilerSinglem {
+            input: READS = reads,
+                   DB = db["singlem"],
+                   PREFIX = prefix,
+                   CPU = cpu,
+                   DOCKER = docker
+        }
+    }
+
 #    call tasks.generateSummaryJson {
 #        input: TSV_META_JSON = [profilerGottcha2.results, profilerCentrifuge.results, profilerKraken2.results],
 #               PREFIX = prefix,
 #               OUTPATH = outdir,
 #               DOCKER = docker
 #    }
-    call make_outputs {
-        input: gottcha2_report_tsv = profilerGottcha2.report_tsv,
-               gottcha2_full_tsv = profilerGottcha2.full_tsv,
-               gottcha2_krona_html = profilerGottcha2.krona_html,
-               centrifuge_classification_tsv = profilerCentrifuge.classification_tsv,
-               centrifuge_report_tsv = profilerCentrifuge.report_tsv,
-               centrifuge_krona_html = profilerCentrifuge.krona_html,
-               kraken2_classification_tsv = profilerKraken2.classification_tsv,
-               kraken2_report_tsv = profilerKraken2.report_tsv,
-               kraken2_krona_html = profilerKraken2.krona_html,
-               outdir = outdir,
-               container = docker
+
+    if (defined(outdir)){
+        call make_outputs {
+            input: gottcha2_report_tsv = profilerGottcha2.report_tsv,
+                gottcha2_full_tsv = profilerGottcha2.full_tsv,
+                gottcha2_krona_html = profilerGottcha2.krona_html,
+                centrifuge_classification_tsv = profilerCentrifuge.classification_tsv,
+                centrifuge_report_tsv = profilerCentrifuge.report_tsv,
+                centrifuge_krona_html = profilerCentrifuge.krona_html,
+                kraken2_classification_tsv = profilerKraken2.classification_tsv,
+                kraken2_report_tsv = profilerKraken2.report_tsv,
+                kraken2_krona_html = profilerKraken2.krona_html,
+                outdir = outdir,
+                container = docker
+        }
+
+        call make_info_file {
+            input: enabled_tools = enabled_tools,
+                db = db,
+                docker = docker,
+                gottcha2_info = profilerGottcha2.info,
+                gottcha2_report_tsv = profilerGottcha2.report_tsv,
+                gottcha2_info = profilerGottcha2.info,
+                centrifuge_report_tsv = profilerCentrifuge.report_tsv,
+                centrifuge_info = profilerCentrifuge.info,
+                kraken2_report_tsv = profilerKraken2.report_tsv,
+                kraken2_info = profilerKraken2.info,
+                outdir = outdir
+        }
     }
 
     output {
@@ -72,15 +99,15 @@ workflow ReadbasedAnalysis {
         File? kraken2_report_tsv = profilerKraken2.report_tsv
         File? kraken2_krona_html = profilerKraken2.krona_html
 #        File summary_json = generateSummaryJson.summary_json
+        File? info = make_info_file.profiler_info
     }
 
     meta {
         author: "Po-E Li, B10, LANL"
         email: "po-e@lanl.gov"
-        version: "1.0.2"
+        version: "1.0.4"
     }
 }
-
 
 task make_outputs{
     String outdir
@@ -116,3 +143,68 @@ task make_outputs{
     }
 }
 
+task make_info_file {
+    Map[String, Boolean] enabled_tools
+    Map[String, String] db
+    String? docker
+    File? gottcha2_report_tsv
+    File? gottcha2_info
+    File? centrifuge_report_tsv
+    File? centrifuge_info
+    File? kraken2_report_tsv
+    File? kraken2_info
+    String outdir
+    String info_filename = "profiler.info"
+
+    command <<<
+        set -euo pipefail
+
+        # generate output info file
+        mkdir -p ${outdir}
+        
+        info_text="Taxonomy Profiling Programs and DBs Used: "
+        echo $info_text > ${outdir}/${info_filename}
+
+        if [[ ${enabled_tools['kraken2']} = true ]]
+        then
+            software_ver=`cat ${kraken2_info}`
+            db_ver=`echo "${db['kraken2']}" | rev | cut -d'/' -f 1 | rev`
+            info_text="Kraken2 v$software_ver (database version: $db_ver)"
+            echo $info_text >> ${outdir}/${info_filename}
+        fi
+
+        if [[ ${enabled_tools['centrifuge']} = true ]]
+        then
+            software_ver=`cat ${centrifuge_info}`
+            db_ver=`echo "${db['centrifuge']}" | rev | cut -d'/' -f 1 | rev`
+            info_text="Centrifuge v$software_ver (database version: $db_ver)"
+            echo $info_text >> ${outdir}/${info_filename}
+        fi
+
+        if [[ ${enabled_tools['gottcha2']} = true ]]
+        then
+            software_ver=`cat ${gottcha2_info}`
+            db_ver=`echo "${db['gottcha2']}" | rev | cut -d'/' -f 1 | rev`
+            info_text="Gottcha2 v$software_ver (database version: $db_ver)"
+            echo $info_text >> ${outdir}/${info_filename}
+        fi
+
+        if [[ ${enabled_tools['singlem']} = true ]]
+        then
+            software_ver=`cat ${singlem_info}`
+            db_ver=`echo "${db['singlem']}" | rev | cut -d'/' -f 1 | rev`
+            info_text="SingleM v$software_ver (database version: $db_ver)"
+            echo $info_text >> ${outdir}/${info_filename}
+        fi
+    >>>
+
+    output {
+        File profiler_info = "${outdir}/${info_filename}"
+        # String profiler_info_text = read_string("${outdir}/${info_filename}")
+    }
+    runtime {
+        memory: "2G"
+        cpu:  1
+        maxRetries: 1
+    }
+}
