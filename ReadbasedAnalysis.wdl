@@ -84,6 +84,8 @@ workflow ReadbasedAnalysis {
                 centrifuge_info = profilerCentrifuge.info,
                 kraken2_report_tsv = profilerKraken2.report_tsv,
                 kraken2_info = profilerKraken2.info,
+                singlem_report_tsv = profilerSinglem.report_tsv,
+                singlem_info = profilerSinglem.info,
                 outdir = outdir
         }
     }
@@ -98,8 +100,11 @@ workflow ReadbasedAnalysis {
         File? kraken2_classification_tsv = profilerKraken2.classification_tsv
         File? kraken2_report_tsv = profilerKraken2.report_tsv
         File? kraken2_krona_html = profilerKraken2.krona_html
+        File? singlem_report_tsv = profilerSinglem.report_tsv,
+        File? singlem_info = profilerSinglem.info,
 #        File summary_json = generateSummaryJson.summary_json
-        File? info = make_info_file.profiler_info
+        File? info_file = make_info_file.profiler_info
+        String? info = make_info_file.profiler_info_text
     }
 
     meta {
@@ -153,6 +158,8 @@ task make_info_file {
     File? centrifuge_info
     File? kraken2_report_tsv
     File? kraken2_info
+    File? singlem_report_tsv
+    File? singlem_info
     String outdir
     String info_filename = "profiler.info"
 
@@ -162,37 +169,38 @@ task make_info_file {
         # generate output info file
         mkdir -p ${outdir}
         
-        info_text="Taxonomy Profiling Programs and DBs Used: "
+        info_text="Taxonomy profiling tools and databases used: "
         echo $info_text > ${outdir}/${info_filename}
 
-        if [[ ${enabled_tools['kraken2']} = true ]]
+        if [[ ${enabled_tools['kraken2']} == true ]]
         then
             software_ver=`cat ${kraken2_info}`
-            db_ver=`echo "${db['kraken2']}" | rev | cut -d'/' -f 1 | rev`
+            #db_ver=`echo "${db['kraken2']}" | rev | cut -d'/' -f 1 | rev`
+            db_ver=`cat ${db['kraken2']}/db_ver.info`
             info_text="Kraken2 v$software_ver (database version: $db_ver)"
             echo $info_text >> ${outdir}/${info_filename}
         fi
 
-        if [[ ${enabled_tools['centrifuge']} = true ]]
+        if [[ ${enabled_tools['centrifuge']} == true ]]
         then
             software_ver=`cat ${centrifuge_info}`
-            db_ver=`echo "${db['centrifuge']}" | rev | cut -d'/' -f 1 | rev`
+            db_ver=`cat $(dirname ${db['centrifuge']})/db_ver.info`
             info_text="Centrifuge v$software_ver (database version: $db_ver)"
             echo $info_text >> ${outdir}/${info_filename}
         fi
 
-        if [[ ${enabled_tools['gottcha2']} = true ]]
+        if [[ ${enabled_tools['gottcha2']} == true ]]
         then
             software_ver=`cat ${gottcha2_info}`
-            db_ver=`echo "${db['gottcha2']}" | rev | cut -d'/' -f 1 | rev`
+            db_ver=`cat ${db['gottcha2']}/db_ver.info`
             info_text="Gottcha2 v$software_ver (database version: $db_ver)"
             echo $info_text >> ${outdir}/${info_filename}
         fi
 
-        if [[ ${enabled_tools['singlem']} = true ]]
+        if [[ ${enabled_tools['singlem']} == true ]]
         then
             software_ver=`cat ${singlem_info}`
-            db_ver=`echo "${db['singlem']}" | rev | cut -d'/' -f 1 | rev`
+            db_ver=`cat ${db['singlem']}/db_ver.info`
             info_text="SingleM v$software_ver (database version: $db_ver)"
             echo $info_text >> ${outdir}/${info_filename}
         fi
@@ -200,7 +208,7 @@ task make_info_file {
 
     output {
         File profiler_info = "${outdir}/${info_filename}"
-        # String profiler_info_text = read_string("${outdir}/${info_filename}")
+        String profiler_info_text = read_string("${outdir}/${info_filename}")
     }
     runtime {
         memory: "2G"
