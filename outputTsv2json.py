@@ -2,7 +2,6 @@
 import os
 import json
 import pandas as pd
-import numpy as np
 import click
 
 @click.command()
@@ -10,7 +9,6 @@ import click
 
 def output2json(meta):
     """ Simple converter that takes TSV files to generate a summary JSON. """
-    df = pd.DataFrame()
     out_dict = {}
 
     tsvfile_lod = json.load(meta)
@@ -21,6 +19,7 @@ def output2json(meta):
         tool = tsvmeta['tool']
         idx_col = 'taxRank'
         read_cnt_col = 'numReads'
+        df = pd.DataFrame()
 
         result = {
             'classifiedReadCount': 0,
@@ -33,7 +32,6 @@ def output2json(meta):
         def reduceDf(df, cols, ranks=['species','genus','family'], top=10):
             """
             Report top # rows of ranks respectively and return a dict
-
             df: results in dataframe
             cols: (rnk_col, name_col, read_count_col, abu_col, taxid_col)
             """

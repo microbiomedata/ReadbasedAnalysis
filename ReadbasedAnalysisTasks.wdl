@@ -8,6 +8,8 @@ task profilerGottcha2 {
 
     command <<<
         set -euo pipefail
+        . /opt/conda/etc/profile.d/conda.sh
+        conda activate gottcha2
 
         gottcha2.py -r ${RELABD_COL} \
                     -i ${sep=' ' READS} \
@@ -17,11 +19,14 @@ task profilerGottcha2 {
                     --database ${DB}
         
         grep "^species" ${PREFIX}.tsv | ktImportTaxonomy -t 3 -m 9 -o ${PREFIX}.krona.html - || true
+
+        gottcha2.py --version > ${PREFIX}.info
     >>>
     output {
         File report_tsv = "${PREFIX}.tsv"
         File full_tsv = "${PREFIX}.full.tsv"
         File krona_html = "${PREFIX}.krona.html"
+        File info = "${PREFIX}.info"
     }
     runtime {
         docker: DOCKER
@@ -46,6 +51,8 @@ task profilerCentrifuge {
 
     command <<<
         set -euo pipefail
+        . /opt/conda/etc/profile.d/conda.sh
+        conda activate centrifuge
 
         centrifuge -x ${DB} \
                    -p ${CPU} \
@@ -54,11 +61,14 @@ task profilerCentrifuge {
                    --report-file ${PREFIX}.report.tsv
         
         ktImportTaxonomy -m 5 -t 2 -o ${PREFIX}.krona.html ${PREFIX}.report.tsv
+
+        centrifuge --version | head -1 | cut -d ' ' -f3 > ${PREFIX}.info
     >>>
     output {
       File classification_tsv="${PREFIX}.classification.tsv"
       File report_tsv="${PREFIX}.report.tsv"
       File krona_html="${PREFIX}.krona.html"
+      File info = "${PREFIX}.info"
     }
     runtime {
         docker: DOCKER
@@ -84,6 +94,8 @@ task profilerKraken2 {
 
     command <<<
         set -euo pipefail
+        . /opt/conda/etc/profile.d/conda.sh
+        conda activate kraken2
         
         kraken2 ${true="--paired" false='' PAIRED} \
                 --threads ${CPU} \
@@ -91,13 +103,17 @@ task profilerKraken2 {
                 --output ${PREFIX}.classification.tsv \
                 --report ${PREFIX}.report.tsv \
                 ${sep=' ' READS}
+        conda deactivate
 
         ktImportTaxonomy -m 3 -t 5 -o ${PREFIX}.krona.html ${PREFIX}.report.tsv
+
+        kraken2 --version | head -1 | cut -d ' ' -f3 > ${PREFIX}.info
     >>>
     output {
       File classification_tsv = "${PREFIX}.classification.tsv"
       File report_tsv = "${PREFIX}.report.tsv"
       File krona_html = "${PREFIX}.krona.html"
+      File info = "${PREFIX}.info"
     }
     runtime {
         docker: DOCKER
