@@ -103,11 +103,11 @@ task profilerKraken2 {
                 --output ${PREFIX}.classification.tsv \
                 --report ${PREFIX}.report.tsv \
                 ${sep=' ' READS}
+        kraken2 --version | head -1 | cut -d ' ' -f3 > ${PREFIX}.info
         conda deactivate
 
         ktImportTaxonomy -m 3 -t 5 -o ${PREFIX}.krona.html ${PREFIX}.report.tsv
 
-        kraken2 --version | head -1 | cut -d ' ' -f3 > ${PREFIX}.info
     >>>
     output {
       File classification_tsv = "${PREFIX}.classification.tsv"
