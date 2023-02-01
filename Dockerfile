@@ -1,8 +1,8 @@
-FROM continuumio/miniconda3:4.8.2
+FROM continuumio/miniconda3:latest
 
 LABEL developer="Po-E Li"
 LABEL email="po-e@lanl.gov"
-LABEL version="1.0.1"
+LABEL version="1.0.4"
 LABEL software="nmdc_taxa_profilers"
 LABEL tags="metagenome, bioinformatics, NMDC, taxonomy"
 
@@ -18,26 +18,23 @@ RUN conda config --add channels conda-forge \
 
 # install gottcha2
 RUN conda install minimap2 pandas
-RUN wget https://github.com/poeli/GOTTCHA2/archive/2.1.7.tar.gz \
-    && tar -xzf 2.1.7.tar.gz \
-    && cp GOTTCHA2-2.1.7/*.py /usr/local/bin \
-    && rm -rf GOTTCHA2-2.1.7/ 2.1.7.zip
+RUN wget https://github.com/poeli/GOTTCHA2/archive/2.1.8.1.tar.gz \
+    && tar -xzf 2.1.8.1.tar.gz \
+    && cp GOTTCHA2-2.1.8.1/*.py /usr/local/bin \
+    && rm -rf GOTTCHA2-2.1.8.1/ 2.1.8.1.zip
 
 # install kraken2
-RUN conda install kraken2=2.1.0
+RUN conda install kraken2=2.1.2
 
 # install centrifuge
-RUN wget https://github.com/DaehwanKimLab/centrifuge/archive/v1.0.4-beta.tar.gz \
-    && tar -xzf v1.0.4-beta.tar.gz \
-    && cd centrifuge-1.0.4-beta \
-    && make install prefix=/usr/local
+RUN conda create -n centrifuge centrifuge=1.0.4_beta
 
 # install krona
 RUN conda install krona \
     && ktUpdateTaxonomy.sh
 
 # install additional libs
-RUN conda install click
+RUN conda install pandas click
 ADD *.py /opt/conda/bin/
 
 CMD ["/bin/bash"]

@@ -18,7 +18,7 @@ workflow ReadbasedAnalysis {
     String? outdir
     Boolean? paired = false
     String bbtools_container="microbiomedata/bbtools:38.96"
-    String? docker = "microbiomedata/nmdc_taxa_profilers:1.0.2p1"
+    String? docker = "microbiomedata/nmdc_taxa_profilers:1.0.4"
 
     call stage {
         input:
@@ -57,6 +57,19 @@ workflow ReadbasedAnalysis {
         }
     }
 
+    call make_info_file {
+        input: enabled_tools = enabled_tools,
+            db = db,
+            docker = docker,
+            gottcha2_info = profilerGottcha2.info,
+            gottcha2_report_tsv = profilerGottcha2.report_tsv,
+            gottcha2_info = profilerGottcha2.info,
+            centrifuge_report_tsv = profilerCentrifuge.report_tsv,
+            centrifuge_info = profilerCentrifuge.info,
+            kraken2_report_tsv = profilerKraken2.report_tsv,
+            kraken2_info = profilerKraken2.info,
+        }
+
     call finish_reads {
             input:
             proj=proj,
@@ -89,12 +102,14 @@ workflow ReadbasedAnalysis {
         File final_kraken2_report_tsv = finish_reads.kr_report_tsv
         File final_kraken2_krona_html = finish_reads.kr_krona_html
         File reads_objects = finish_reads.objects
+        File? info_file = make_info_file.profiler_info
+        String? info = make_info_file.profiler_info_text
     }
 
     meta {
         author: "Po-E Li, B10, LANL"
         email: "po-e@lanl.gov"
-        version: "1.0.2"
+        version: "1.0.4"
     }
 }
 
@@ -249,3 +264,60 @@ task make_outputs{
     }
 }
 
+
+task make_info_file {
+    Map[String, Boolean] enabled_tools
+    Map[String, String] db
+    String? docker
+    File? gottcha2_report_tsv
+    File? gottcha2_info
+    File? centrifuge_report_tsv
+    File? centrifuge_info
+    File? kraken2_report_tsv
+    File? kraken2_info
+    String info_filename = "profiler.info"
+
+    command <<<
+        set -euo pipefail
+
+        # generate output info file
+
+        info_text="Taxonomy profiling tools and databases used: "
+        echo $info_text > ${info_filename}
+
+        if [[ ${enabled_tools['kraken2']} == true ]]
+        then
+            software_ver=`cat ${kraken2_info}`
+            #db_ver=`echo "${db['kraken2']}" | rev | cut -d'/' -f 1 | rev`
+            db_ver=`cat ${db['kraken2']}/db_ver.info`
+            info_text="Kraken2 v$software_ver (database version: $db_ver)"
+            echo $info_text >> ${info_filename}
+        fi
+
+        if [[ ${enabled_tools['centrifuge']} == true ]]
+        then
+            software_ver=`cat ${centrifuge_info}`
+            db_ver=`cat $(dirname ${db['centrifuge']})/db_ver.info`
+            info_text="Centrifuge v$software_ver (database version: $db_ver)"
+            echo $info_text >> ${info_filename}
+        fi
+
+        if [[ ${enabled_tools['gottcha2']} == true ]]
+        then
+            software_ver=`cat ${gottcha2_info}`
+            db_ver=`cat ${db['gottcha2']}/db_ver.info`
+            info_text="Gottcha2 v$software_ver (database version: $db_ver)"
+            echo $info_text >> ${info_filename}
+        fi
+    >>>
+
+    output {
+        File profiler_info = "${info_filename}"
+        String profiler_info_text = read_string("${info_filename}")
+    }
+    runtime {
+        memory: "2G"
+        cpu:  1
+        maxRetries: 1
+    }
+}
