@@ -1,8 +1,12 @@
 import "ReadbasedAnalysisTasks.wdl" as tasks
 
 workflow ReadbasedAnalysis {
-    Map[String, Boolean] enabled_tools
-    Map[String, String] db
+    Boolean enabled_tools_gottcha2 = true
+    Boolean enabled_tools_kraken2 = true
+    Boolean enabled_tools_centrifuge = true
+    String db_gottcha2 = "/refdata/gottcha2/RefSeq-r90.cg.BacteriaArchaeaViruses.species.fna"
+    String db_kraken2 = "/refdata/kraken2/"
+    String db_centrifuge = "/refdata/centrifuge/p_compressed"
     Int cpu = 8
     String input_file
     String proj
@@ -22,31 +26,31 @@ workflow ReadbasedAnalysis {
         input_file=input_file
     }
 
-    if (enabled_tools["gottcha2"] == true) {
+    if (enabled_tools_gottcha2 == true) {
         call tasks.profilerGottcha2 {
             input: READS = stage.reads,
-                   DB = db["gottcha2"],
+                   DB = db_gottcha2,
                    PREFIX = prefix,
                    CPU = cpu,
                    DOCKER = docker
         }
     }
 
-    if (enabled_tools["kraken2"] == true) {
+    if (enabled_tools_kraken2 == true) {
         call tasks.profilerKraken2 {
             input: READS = stage.reads,
                    PAIRED = paired,
-                   DB = db["kraken2"],
+                   DB = db_kraken2,
                    PREFIX = prefix,
                    CPU = cpu,
                    DOCKER = docker
         }
     }
 
-    if (enabled_tools["centrifuge"] == true) {
+    if (enabled_tools_centrifuge == true) {
         call tasks.profilerCentrifuge {
             input: READS = stage.reads,
-                   DB = db["centrifuge"],
+                   DB = db_centrifuge,
                    PREFIX = prefix,
                    CPU = cpu,
                    DOCKER = docker

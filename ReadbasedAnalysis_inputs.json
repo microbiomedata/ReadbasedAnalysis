@@ -1,14 +1,4 @@
 {
-  "ReadbasedAnalysis.enabled_tools": {
-    "gottcha2": true,
-    "kraken2": true,
-    "centrifuge": true
-  },
-  "ReadbasedAnalysis.db": {
-    "gottcha2": "/global/cfs/projectdirs/m3408/aim2/database/gottcha2/RefSeq-r90.cg.BacteriaArchaeaViruses.species.fna",
-    "kraken2": "/global/cfs/projectdirs/m3408/aim2/database/kraken2/",
-    "centrifuge": "/global/cfs/projectdirs/m3408/aim2/database/centrifuge/p_compressed"
-  },
   "ReadbasedAnalysis.input_file": "/path/to/test.fastq.gz",
   "ReadbasedAnalysis.paired": true,
   "ReadbasedAnalysis.prefix": "TEST",
