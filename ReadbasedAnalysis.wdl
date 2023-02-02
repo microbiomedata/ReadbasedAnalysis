@@ -58,7 +58,8 @@ workflow ReadbasedAnalysis {
     }
 
     call make_info_file {
-        input: enabled_tools_gottcha2 = enabled_tools_gottcha2,
+        input: docker = docker,
+            enabled_tools_gottcha2 = enabled_tools_gottcha2,
             enabled_tools_kraken2 = enabled_tools_kraken2,
             enabled_tools_centrifuge = enabled_tools_centrifuge,
             db_gottcha2 = db_gottcha2,
@@ -80,7 +81,7 @@ workflow ReadbasedAnalysis {
             start=stage.start,
             git_url=git_url,
             url_root=url_root,
-            input_file=input_file,
+            input_file=stage.read_in,
             container="microbiomedata/workflowmeta:1.1.1",
             informed_by=informed_by,
             resource=resource,
@@ -141,6 +142,7 @@ task stage {
    >>>
 
    output{
+      File read_in = target
       Array[File] reads = [output1, output2]
       String start = read_string("start.txt")
    }
@@ -276,7 +278,7 @@ task make_info_file {
     String db_gottcha2
     String db_kraken2
     String db_centrifuge
-    String? docker
+    String docker
     File? gottcha2_report_tsv
     File? gottcha2_info
     File? centrifuge_report_tsv
@@ -313,7 +315,7 @@ task make_info_file {
         if [[ ${enabled_tools_gottcha2} == true ]]
         then
             software_ver=`cat ${gottcha2_info}`
-            db_ver=`cat ${db_gottcha2}/db_ver.info`
+            db_ver=`cat $(dirname ${db_gottcha2})/db_ver.info`
             info_text="Gottcha2 v$software_ver (database version: $db_ver)"
             echo $info_text >> ${info_filename}
         fi
@@ -324,6 +326,7 @@ task make_info_file {
         String profiler_info_text = read_string("${info_filename}")
     }
     runtime {
+        docker: docker
         memory: "2G"
         cpu:  1
         maxRetries: 1
