@@ -178,14 +178,28 @@ task finish_reads {
         set -e
         end=`date --iso-8601=seconds`
         # Set names
-        ln ${gottcha2_report_tsv} ${prefix}_gottcha2_report.tsv
+        if [[ $(head -2 ${gottcha2_report_tsv}|wc -l) -eq 1 ]] ; then
+            echo "Nothing found in gottcha2 for ${proj} $end" >> ${prefix}_gottcha2_report.tsv
+        else
+            ln ${gottcha2_report_tsv} ${prefix}_gottcha2_report.tsv
+        fi
         ln ${gottcha2_full_tsv} ${prefix}_gottcha2_full_tsv
         ln ${gottcha2_krona_html} ${prefix}_gottcha2_krona.html
+
         ln ${centrifuge_classification_tsv} ${prefix}_centrifuge_classification.tsv
-        ln ${centrifuge_report_tsv} ${prefix}_centrifuge_report.tsv
+        if [[ $(head -2 ${centrifuge_report_tsv}|wc -l) -eq 1 ]] ; then
+            echo "Nothing found in centrifuge for ${proj} $end" >> ${prefix}_centrifuge_report.tsv
+        else
+            ln ${centrifuge_report_tsv} ${prefix}_centrifuge_report.tsv
+        fi
         ln ${centrifuge_krona_html} ${prefix}_centrifuge_krona.html
+
         ln ${kraken2_classification_tsv} ${prefix}_kraken2_classification.tsv
-        ln ${kraken2_report_tsv} ${prefix}_kraken2_report.tsv
+        if [[ $(head -2 ${kraken2_report_tsv}|wc -l) -eq 1 ]] ; then
+            echo "Nothing found in kraken2 for ${proj} $end" >> ${prefix}_kraken2_report.tsv
+        else
+            ln ${kraken2_report_tsv} ${prefix}_kraken2_report.tsv
+        fi
         ln ${kraken2_krona_html} ${prefix}_kraken2_krona.html
 
         /scripts/generate_object_json.py \
