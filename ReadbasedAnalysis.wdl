@@ -12,7 +12,7 @@ workflow ReadbasedAnalysis {
     String proj
     String resource
     String informed_by
-    String?  git_url="https://github.com/microbiomedata/mg_annotation/releases/tag/0.1"
+    String?  git_url="https://github.com/microbiomedata/ReadbasedAnalysis"
     String?  url_root="https://data.microbiomedata.org/data/"
     String prefix
     String? outdir
