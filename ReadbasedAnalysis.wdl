@@ -10,12 +10,7 @@ workflow ReadbasedAnalysis {
     Int cpu = 8
     String input_file
     String proj
-    String resource
-    String informed_by
-    String?  git_url="https://github.com/microbiomedata/ReadbasedAnalysis"
-    String?  url_root="https://data.microbiomedata.org/data/"
-    String prefix
-    String? outdir
+    String prefix=sub(proj, ":", "_")
     Boolean? paired = false
     String bbtools_container="microbiomedata/bbtools:38.96"
     String? docker = "microbiomedata/nmdc_taxa_profilers:1.0.4"
@@ -78,13 +73,8 @@ workflow ReadbasedAnalysis {
     call finish_reads {
             input:
             proj=proj,
-            start=stage.start,
-            git_url=git_url,
-            url_root=url_root,
             input_file=stage.read_in,
             container="microbiomedata/workflowmeta:1.1.1",
-            informed_by=informed_by,
-            resource=resource,
             gottcha2_report_tsv=profilerGottcha2.report_tsv,
             gottcha2_full_tsv=profilerGottcha2.full_tsv,
             gottcha2_krona_html=profilerGottcha2.krona_html,
@@ -136,15 +126,12 @@ task stage {
        fi
 
         reformat.sh -Xmx${default="10G" memory} in=${target} out1=${output1} out2=${output2}    
-       # Capture the start time
-       date --iso-8601=seconds > start.txt
 
    >>>
 
    output{
       File read_in = target
       Array[File] reads = [output1, output2]
-      String start = read_string("start.txt")
    }
    runtime {
      cpu:  2
@@ -156,13 +143,8 @@ task stage {
 task finish_reads {
     String input_file
     String container
-    String git_url
-    String informed_by
     String proj
     String prefix=sub(proj, ":", "_")
-    String resource
-    String url_root
-    String start
     File gottcha2_report_tsv
     File gottcha2_full_tsv
     File gottcha2_krona_html
@@ -176,7 +158,6 @@ task finish_reads {
     command <<<
 
         set -e
-        end=`date --iso-8601=seconds`
         # Set names
         if [[ $(head -2 ${gottcha2_report_tsv}|wc -l) -eq 1 ]] ; then
             echo "Nothing found in gottcha2 for ${proj} $end" >> ${prefix}_gottcha2_report.tsv
@@ -202,34 +183,9 @@ task finish_reads {
         fi
         ln ${kraken2_krona_html} ${prefix}_kraken2_krona.html
 
-        /scripts/generate_object_json.py \
-            --type "nmdc:ReadBasedAnalysisActivity" \
-            --set read_based_taxonomy_analysis_activity_set \
-            --part ${proj} \
-            -p "name=ReadBased Analysis Activity for ${proj}" \
-                was_informed_by=${informed_by} \
-                started_at_time=${start} \
-                ended_at_time=$end \
-                execution_resource="${resource}" \
-                git_url=${git_url} \
-                version="v1.0.2-beta" \
-            --url ${url_root}${proj}/ReadbasedAnalysis/ \
-            --inputs ${input_file} \
-            --outputs \
-            ${prefix}_gottcha2_report.tsv "GOTTCHA2 classification report file" "GOTTCHA2 Classification Report" "GOTTCHA2 Classification for ${proj}"\
-            ${prefix}_gottcha2_full_tsv "GOTTCHA2 report file" "GOTTCHA2 Report Full" "GOTTCHA2 Full Report for ${proj}" \
-            ${prefix}_gottcha2_krona.html "GOTTCHA2 krona plot HTML file" "GOTTCHA2 Krona Plot" "GOTTCHA2 Krona for ${proj}"\
-            ${prefix}_centrifuge_classification.tsv "Centrifuge output read classification file" "Centrifuge Taxonomic Classification" "Centrifuge Classification for ${proj}"\
-            ${prefix}_centrifuge_report.tsv "Centrifuge Classification Report" "Centrifuge output report file" "Centrifuge Report for ${proj}"\
-            ${prefix}_centrifuge_krona.html "Centrifug krona plot HTML file" "Centrifuge Krona Plot" "Centrifuge Krona for ${proj}"\
-            ${prefix}_kraken2_classification.tsv "Kraken2 output read classification file" "Kraken2 Taxonomic Classification" "Kraken2 Classification for ${proj}" \
-            ${prefix}_kraken2_report.tsv "Kraken2 output report file" "Kraken2 Classification Report" "Kraken2 Report for ${proj}" \
-            ${prefix}_kraken2_krona.html "Kraken2 Krona plot HTML file" "Kraken2 Krona Plot" "Kraken2 Krona for ${proj}"
     >>>
 
     output {
-
-       File objects="objects.json"
        File g2_report_tsv="${prefix}_gottcha2_report.tsv"
        File g2_full_tsv="${prefix}_gottcha2_full_tsv"
        File g2_krona_html="${prefix}_gottcha2_krona.html"
