@@ -146,12 +146,9 @@ task stage {
 task finish_reads {
     String input_file
     String container
-    String git_url
     String informed_by
     String proj
     String prefix=sub(proj, ":", "_")
-    String resource
-    String url_root
     String start
     File gottcha2_report_tsv
     File gottcha2_full_tsv
