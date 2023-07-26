@@ -10,6 +10,7 @@ workflow ReadbasedAnalysis {
     Int cpu = 8
     String input_file
     String proj
+    String prefix=sub(proj, ":", "_")
     Boolean? paired = false
     String bbtools_container="microbiomedata/bbtools:38.96"
     String? docker = "microbiomedata/nmdc_taxa_profilers:1.0.4"
@@ -24,7 +25,7 @@ workflow ReadbasedAnalysis {
         call tasks.profilerGottcha2 {
             input: READS = stage.reads,
                    DB = db_gottcha2,
-                   PREFIX = proj,
+                   PREFIX = prefix,
                    CPU = cpu,
                    DOCKER = docker
         }
@@ -35,7 +36,7 @@ workflow ReadbasedAnalysis {
             input: READS = stage.reads,
                    PAIRED = paired,
                    DB = db_kraken2,
-                   PREFIX = proj,
+                   PREFIX = prefix,
                    CPU = cpu,
                    DOCKER = docker
         }
@@ -45,7 +46,7 @@ workflow ReadbasedAnalysis {
         call tasks.profilerCentrifuge {
             input: READS = stage.reads,
                    DB = db_centrifuge,
-                   PREFIX = proj,
+                   PREFIX = prefix,
                    CPU = cpu,
                    DOCKER = docker
         }
