@@ -84,7 +84,8 @@ workflow ReadbasedAnalysis {
             centrifuge_krona_html=profilerCentrifuge.krona_html,
             kraken2_classification_tsv=profilerKraken2.classification_tsv,
             kraken2_report_tsv=profilerKraken2.report_tsv,
-            kraken2_krona_html=profilerKraken2.krona_html
+            kraken2_krona_html=profilerKraken2.krona_html,
+            prof_info_file=make_info_file.profiler_info
         }
 
     output {
@@ -97,7 +98,7 @@ workflow ReadbasedAnalysis {
         File final_kraken2_classification_tsv = finish_reads.kr_classification_tsv
         File final_kraken2_report_tsv = finish_reads.kr_report_tsv
         File final_kraken2_krona_html = finish_reads.kr_krona_html
-        File? info_file = make_info_file.profiler_info
+        File? info_file = finish_reads.rb_info_file
         String? info = make_info_file.profiler_info_text
     }
 
@@ -149,6 +150,7 @@ task finish_reads {
     String proj
     String prefix=sub(proj, ":", "_")
     String start
+    File prof_info_file
     File gottcha2_report_tsv
     File gottcha2_full_tsv
     File gottcha2_krona_html
@@ -188,6 +190,9 @@ task finish_reads {
         fi
         ln ${kraken2_krona_html} ${prefix}_kraken2_krona.html
 
+        #info file
+        ln ${prof_info_file} ${prefix}_profiler.info
+
     >>>
 
     output {
@@ -200,6 +205,7 @@ task finish_reads {
        File kr_classification_tsv="${prefix}_kraken2_classification.tsv"
        File kr_report_tsv="${prefix}_kraken2_report.tsv"
        File kr_krona_html="${prefix}_kraken2_krona.html"
+       File rb_info_file="${prefix}_profiler.info"
     }
 
     runtime {
