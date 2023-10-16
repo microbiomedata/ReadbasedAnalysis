@@ -1,20 +1,23 @@
+version 1.0
+
 import "ReadbasedAnalysisTasks.wdl" as tasks
 
 workflow ReadbasedAnalysis {
-    Boolean enabled_tools_gottcha2 = true
-    Boolean enabled_tools_kraken2 = true
-    Boolean enabled_tools_centrifuge = true
-    String db_gottcha2 = "/refdata/gottcha2/RefSeq-r90.cg.BacteriaArchaeaViruses.species.fna"
-    String db_kraken2 = "/refdata/kraken2/"
-    String db_centrifuge = "/refdata/centrifuge/p_compressed"
-    Int cpu = 8
-    String input_file
-    String proj
-    String prefix=sub(proj, ":", "_")
-    Boolean? paired = false
-    String bbtools_container="microbiomedata/bbtools:38.96"
-    String? docker = "microbiomedata/nmdc_taxa_profilers:1.0.4"
-
+    input {
+        Boolean enabled_tools_gottcha2 = true
+        Boolean enabled_tools_kraken2 = true
+        Boolean enabled_tools_centrifuge = true
+        String db_gottcha2 = "/refdata/gottcha2/RefSeq-r90.cg.BacteriaArchaeaViruses.species.fna"
+        String db_kraken2 = "/refdata/kraken2/"
+        String db_centrifuge = "/refdata/centrifuge/p_compressed"
+        Int cpu = 8
+        String input_file
+        String proj
+        String prefix=sub(proj, ":", "_")
+        Boolean? paired = false
+        String bbtools_container="microbiomedata/bbtools:38.96"
+        String? docker = "microbiomedata/nmdc_taxa_profilers:1.0.4"
+    }
     call stage {
         input:
         container=bbtools_container,
@@ -111,12 +114,14 @@ workflow ReadbasedAnalysis {
 
 
 task stage {
-   String container
-   String input_file
-   String? memory = "4G"
-   String target = "staged.fastq.gz"
-   String output1 = "input.left.fastq.gz"
-   String output2 = "input.right.fastq.gz"
+    input {
+        String container
+        String input_file
+        String? memory = "4G"
+        String target = "staged.fastq.gz"
+        String output1 = "input.left.fastq.gz"
+        String output2 = "input.right.fastq.gz"
+    }
 
    command <<<
        set -e
@@ -145,21 +150,23 @@ task stage {
 }
 
 task finish_reads {
-    String input_file
-    String container
-    String proj
-    String prefix=sub(proj, ":", "_")
-    String start
-    File prof_info_file
-    File gottcha2_report_tsv
-    File gottcha2_full_tsv
-    File gottcha2_krona_html
-    File centrifuge_classification_tsv
-    File centrifuge_report_tsv
-    File centrifuge_krona_html
-    File kraken2_classification_tsv
-    File kraken2_report_tsv
-    File kraken2_krona_html
+    input {
+        String input_file
+        String container
+        String proj
+        String prefix=sub(proj, ":", "_")
+        String start
+        File prof_info_file
+        File gottcha2_report_tsv
+        File gottcha2_full_tsv
+        File gottcha2_krona_html
+        File centrifuge_classification_tsv
+        File centrifuge_report_tsv
+        File centrifuge_krona_html
+        File kraken2_classification_tsv
+        File kraken2_report_tsv
+        File kraken2_krona_html
+    }
 
     command <<<
 
@@ -217,18 +224,19 @@ task finish_reads {
 
 
 task make_outputs{
-    String outdir
-    File? gottcha2_report_tsv
-    File? gottcha2_full_tsv
-    File? gottcha2_krona_html
-    File? centrifuge_classification_tsv
-    File? centrifuge_report_tsv
-    File? centrifuge_krona_html
-    File? kraken2_classification_tsv
-    File? kraken2_report_tsv
-    File? kraken2_krona_html
-    String container
-
+    input {
+        String outdir
+        File? gottcha2_report_tsv
+        File? gottcha2_full_tsv
+        File? gottcha2_krona_html
+        File? centrifuge_classification_tsv
+        File? centrifuge_report_tsv
+        File? centrifuge_krona_html
+        File? kraken2_classification_tsv
+        File? kraken2_report_tsv
+        File? kraken2_krona_html
+        String container
+    }
     command<<<
 
         mkdir -p ${outdir}/gottcha2
@@ -253,21 +261,22 @@ task make_outputs{
 
 
 task make_info_file {
-    Boolean enabled_tools_gottcha2
-    Boolean enabled_tools_kraken2
-    Boolean enabled_tools_centrifuge
-    String db_gottcha2
-    String db_kraken2
-    String db_centrifuge
-    String docker
-    File? gottcha2_report_tsv
-    File? gottcha2_info
-    File? centrifuge_report_tsv
-    File? centrifuge_info
-    File? kraken2_report_tsv
-    File? kraken2_info
-    String info_filename = "profiler.info"
-
+    input {
+        Boolean enabled_tools_gottcha2
+        Boolean enabled_tools_kraken2
+        Boolean enabled_tools_centrifuge
+        String db_gottcha2
+        String db_kraken2
+        String db_centrifuge
+        String docker
+        File? gottcha2_report_tsv
+        File? gottcha2_info
+        File? centrifuge_report_tsv
+        File? centrifuge_info
+        File? kraken2_report_tsv
+        File? kraken2_info
+        String info_filename = "profiler.info"
+    }
     command <<<
         set -euo pipefail
 
