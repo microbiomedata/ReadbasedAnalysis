@@ -156,16 +156,16 @@ task finish_reads {
         String proj
         String prefix=sub(proj, ":", "_")
         String start
-        File prof_info_file
-        File gottcha2_report_tsv
-        File gottcha2_full_tsv
-        File gottcha2_krona_html
-        File centrifuge_classification_tsv
-        File centrifuge_report_tsv
-        File centrifuge_krona_html
-        File kraken2_classification_tsv
-        File kraken2_report_tsv
-        File kraken2_krona_html
+        File? prof_info_file
+        File? gottcha2_report_tsv
+        File? gottcha2_full_tsv
+        File? gottcha2_krona_html
+        File? centrifuge_classification_tsv
+        File? centrifuge_report_tsv
+        File? centrifuge_krona_html
+        File? kraken2_classification_tsv
+        File? kraken2_report_tsv
+        File? kraken2_krona_html
     }
 
     command <<<
