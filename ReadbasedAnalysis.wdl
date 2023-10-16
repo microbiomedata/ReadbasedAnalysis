@@ -92,15 +92,15 @@ workflow ReadbasedAnalysis {
         }
 
     output {
-        File final_gottcha2_report_tsv = finish_reads.g2_report_tsv
-        File final_gottcha2_full_tsv = finish_reads.g2_full_tsv
-        File final_gottcha2_krona_html = finish_reads.g2_krona_html
-        File final_centrifuge_classification_tsv = finish_reads.cent_classification_tsv
-        File final_centrifuge_report_tsv = finish_reads.cent_report_tsv
-        File final_centrifuge_krona_html = finish_reads.cent_krona_html
-        File final_kraken2_classification_tsv = finish_reads.kr_classification_tsv
-        File final_kraken2_report_tsv = finish_reads.kr_report_tsv
-        File final_kraken2_krona_html = finish_reads.kr_krona_html
+        File? final_gottcha2_report_tsv = finish_reads.g2_report_tsv
+        File? final_gottcha2_full_tsv = finish_reads.g2_full_tsv
+        File? final_gottcha2_krona_html = finish_reads.g2_krona_html
+        File? final_centrifuge_classification_tsv = finish_reads.cent_classification_tsv
+        File? final_centrifuge_report_tsv = finish_reads.cent_report_tsv
+        File? final_centrifuge_krona_html = finish_reads.cent_krona_html
+        File? final_kraken2_classification_tsv = finish_reads.kr_classification_tsv
+        File? final_kraken2_report_tsv = finish_reads.kr_report_tsv
+        File? final_kraken2_krona_html = finish_reads.kr_krona_html
         File? info_file = finish_reads.rb_info_file
         String? info = make_info_file.profiler_info_text
     }
