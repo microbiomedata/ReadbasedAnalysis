@@ -26,10 +26,10 @@ task profilerGottcha2 {
         gottcha2.py --version > ${PREFIX}.info
     >>>
     output {
-        File? report_tsv = "${PREFIX}.tsv"
-        File? full_tsv = "${PREFIX}.full.tsv"
-        File? krona_html = "${PREFIX}.krona.html"
-        File? info = "${PREFIX}.info"
+        File report_tsv = "${PREFIX}.tsv"
+        File full_tsv = "${PREFIX}.full.tsv"
+        File krona_html = "${PREFIX}.krona.html"
+        File info = "${PREFIX}.info"
     }
     runtime {
         docker: DOCKER
@@ -69,10 +69,10 @@ task profilerCentrifuge {
         centrifuge --version | head -1 | cut -d ' ' -f3 > ${PREFIX}.info
     >>>
     output {
-      File? classification_tsv="${PREFIX}.classification.tsv"
-      File? report_tsv="${PREFIX}.report.tsv"
-      File? krona_html="${PREFIX}.krona.html"
-      File? info = "${PREFIX}.info"
+      File classification_tsv="${PREFIX}.classification.tsv"
+      File report_tsv="${PREFIX}.report.tsv"
+      File krona_html="${PREFIX}.krona.html"
+      File info = "${PREFIX}.info"
     }
     runtime {
         docker: DOCKER
@@ -116,10 +116,10 @@ task profilerKraken2 {
 
     >>>
     output {
-      File? classification_tsv = "${PREFIX}.classification.tsv"
-      File? report_tsv = "${PREFIX}.report.tsv"
-      File? krona_html = "${PREFIX}.krona.html"
-      File? info = "${PREFIX}.info"
+      File classification_tsv = "${PREFIX}.classification.tsv"
+      File report_tsv = "${PREFIX}.report.tsv"
+      File krona_html = "${PREFIX}.krona.html"
+      File info = "${PREFIX}.info"
     }
     runtime {
         docker: DOCKER
@@ -146,7 +146,7 @@ task generateSummaryJson {
         outputTsv2json.py --meta ${write_json(TSV_META_JSON)} > ${PREFIX}.json
     }
     output {
-        File? summary_json = "${PREFIX}.json"
+        File summary_json = "${PREFIX}.json"
     }
     runtime {
         docker: DOCKER
@@ -181,7 +181,7 @@ task stage {
    >>>
 
    output{
-      File? read = "${target}"
+      File read = "${target}"
       String start = read_string("start.txt")
    }
    runtime {

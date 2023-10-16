@@ -92,16 +92,16 @@ workflow ReadbasedAnalysis {
         }
 
     output {
-        File? final_gottcha2_report_tsv = finish_reads.g2_report_tsv
-        File? final_gottcha2_full_tsv = finish_reads.g2_full_tsv
-        File? final_gottcha2_krona_html = finish_reads.g2_krona_html
-        File? final_centrifuge_classification_tsv = finish_reads.cent_classification_tsv
-        File? final_centrifuge_report_tsv = finish_reads.cent_report_tsv
-        File? final_centrifuge_krona_html = finish_reads.cent_krona_html
-        File? final_kraken2_classification_tsv = finish_reads.kr_classification_tsv
-        File? final_kraken2_report_tsv = finish_reads.kr_report_tsv
-        File? final_kraken2_krona_html = finish_reads.kr_krona_html
-        File? info_file = finish_reads.rb_info_file
+        File final_gottcha2_report_tsv = finish_reads.g2_report_tsv
+        File final_gottcha2_full_tsv = finish_reads.g2_full_tsv
+        File final_gottcha2_krona_html = finish_reads.g2_krona_html
+        File final_centrifuge_classification_tsv = finish_reads.cent_classification_tsv
+        File final_centrifuge_report_tsv = finish_reads.cent_report_tsv
+        File final_centrifuge_krona_html = finish_reads.cent_krona_html
+        File final_kraken2_classification_tsv = finish_reads.kr_classification_tsv
+        File final_kraken2_report_tsv = finish_reads.kr_report_tsv
+        File final_kraken2_krona_html = finish_reads.kr_krona_html
+        File info_file = finish_reads.rb_info_file
         String? info = make_info_file.profiler_info_text
     }
 
@@ -156,16 +156,16 @@ task finish_reads {
         String proj
         String prefix=sub(proj, ":", "_")
         String start
-        File? prof_info_file
-        File? gottcha2_report_tsv
-        File? gottcha2_full_tsv
-        File? gottcha2_krona_html
-        File? centrifuge_classification_tsv
-        File? centrifuge_report_tsv
-        File? centrifuge_krona_html
-        File? kraken2_classification_tsv
-        File? kraken2_report_tsv
-        File? kraken2_krona_html
+        File prof_info_file
+        File gottcha2_report_tsv
+        File gottcha2_full_tsv
+        File gottcha2_krona_html
+        File centrifuge_classification_tsv
+        File centrifuge_report_tsv
+        File centrifuge_krona_html
+        File kraken2_classification_tsv
+        File kraken2_report_tsv
+        File kraken2_krona_html
     }
 
     command <<<
@@ -203,16 +203,16 @@ task finish_reads {
     >>>
 
     output {
-       File? g2_report_tsv="${prefix}_gottcha2_report.tsv"
-       File? g2_full_tsv="${prefix}_gottcha2_full_tsv"
-       File? g2_krona_html="${prefix}_gottcha2_krona.html"
-       File? cent_classification_tsv="${prefix}_centrifuge_classification.tsv"
-       File? cent_report_tsv="${prefix}_centrifuge_report.tsv"
-       File? cent_krona_html="${prefix}_centrifuge_krona.html"
-       File? kr_classification_tsv="${prefix}_kraken2_classification.tsv"
-       File? kr_report_tsv="${prefix}_kraken2_report.tsv"
-       File? kr_krona_html="${prefix}_kraken2_krona.html"
-       File? rb_info_file="${prefix}_profiler.info"
+       File g2_report_tsv="${prefix}_gottcha2_report.tsv"
+       File g2_full_tsv="${prefix}_gottcha2_full_tsv"
+       File g2_krona_html="${prefix}_gottcha2_krona.html"
+       File cent_classification_tsv="${prefix}_centrifuge_classification.tsv"
+       File cent_report_tsv="${prefix}_centrifuge_report.tsv"
+       File cent_krona_html="${prefix}_centrifuge_krona.html"
+       File kr_classification_tsv="${prefix}_kraken2_classification.tsv"
+       File kr_report_tsv="${prefix}_kraken2_report.tsv"
+       File kr_krona_html="${prefix}_kraken2_krona.html"
+       File rb_info_file="${prefix}_profiler.info"
     }
 
     runtime {
@@ -226,15 +226,15 @@ task finish_reads {
 task make_outputs{
     input {
         String outdir
-        File? gottcha2_report_tsv
-        File? gottcha2_full_tsv
-        File? gottcha2_krona_html
-        File? centrifuge_classification_tsv
-        File? centrifuge_report_tsv
-        File? centrifuge_krona_html
-        File? kraken2_classification_tsv
-        File? kraken2_report_tsv
-        File? kraken2_krona_html
+        File gottcha2_report_tsv
+        File gottcha2_full_tsv
+        File gottcha2_krona_html
+        File centrifuge_classification_tsv
+        File centrifuge_report_tsv
+        File centrifuge_krona_html
+        File kraken2_classification_tsv
+        File kraken2_report_tsv
+        File kraken2_krona_html
         String container
     }
     command<<<
@@ -269,12 +269,12 @@ task make_info_file {
         String db_kraken2
         String db_centrifuge
         String docker
-        File? gottcha2_report_tsv
-        File? gottcha2_info
-        File? centrifuge_report_tsv
-        File? centrifuge_info
-        File? kraken2_report_tsv
-        File? kraken2_info
+        File gottcha2_report_tsv
+        File gottcha2_info
+        File centrifuge_report_tsv
+        File centrifuge_info
+        File kraken2_report_tsv
+        File kraken2_info
         String info_filename = "profiler.info"
     }
     command <<<
