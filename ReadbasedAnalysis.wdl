@@ -122,7 +122,7 @@ task stage {
 
    command <<<
        set -e
-       if [ $( echo ${input_file}|egrep -c "https*:") -gt 0 ] ; then
+       if [ $( echo ~${input_file}|egrep -c "https*:") -gt 0 ] ; then
            wget ~${input_file} -O ~${target}
        else
            ln ~${input_file} ~${target} || cp ~${input_file} ~${target}
