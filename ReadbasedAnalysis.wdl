@@ -122,13 +122,14 @@ task stage {
 
    command <<<
        set -e
+       echo "~{target}"
        if [ $( echo ~{input_file}|egrep -c "https*:") -gt 0 ] ; then
            wget ~{input_file} -O ~{target}
        else
            ln ~{input_file} ~{target} || cp ~{input_file} ~{target}
        fi
 
-        reformat.sh -Xmx${default="10G" memory} in=~{target} out1=~{output1} out2=~{output2}
+        reformat.sh -Xmx~{default="10G" memory} in=~{target} out1=~{output1} out2=~{output2}
        # Capture the start time
        date --iso-8601=seconds > start.txt
 
