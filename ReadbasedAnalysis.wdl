@@ -24,7 +24,7 @@ workflow ReadbasedAnalysis {
         input_file=input_file
     }
 
-    if (enabled_tools_gottcha2 == true) {
+
         call tasks.profilerGottcha2 {
             input: READS = stage.reads,
                    DB = db_gottcha2,
@@ -32,9 +32,8 @@ workflow ReadbasedAnalysis {
                    CPU = cpu,
                    DOCKER = docker
         }
-    }
 
-    if (enabled_tools_kraken2 == true) {
+
         call tasks.profilerKraken2 {
             input: READS = stage.reads,
                    PAIRED = paired,
@@ -43,9 +42,8 @@ workflow ReadbasedAnalysis {
                    CPU = cpu,
                    DOCKER = docker
         }
-    }
 
-    if (enabled_tools_centrifuge == true) {
+
         call tasks.profilerCentrifuge {
             input: READS = stage.reads,
                    DB = db_centrifuge,
@@ -53,7 +51,6 @@ workflow ReadbasedAnalysis {
                    CPU = cpu,
                    DOCKER = docker
         }
-    }
 
     call make_info_file {
         input: docker = docker,
