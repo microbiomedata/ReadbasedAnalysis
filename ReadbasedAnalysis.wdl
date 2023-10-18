@@ -294,7 +294,7 @@ task make_info_file {
 
 
         software_ver=`cat ~{gottcha2_info}`
-        db_ver=`cat ~(dirname ~{db_gottcha2})/db_ver.info`
+        db_ver=`cat $(dirname ~{db_gottcha2})/db_ver.info`
         info_text="Gottcha2 v$software_ver (database version: $db_ver)"
         echo $info_text >> ~{info_filename}
 
