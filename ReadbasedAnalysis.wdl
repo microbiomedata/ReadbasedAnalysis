@@ -275,28 +275,28 @@ task make_info_file {
         # generate output info file
 
         info_text="Taxonomy profiling tools and databases used: "
-        echo "~{info_text}" > ~{info_filename}
+        echo $info_text > ~{info_filename}
 
 
         software_ver=`cat ~{kraken2_info}`
         #db_ver=`echo "~{db_kraken2}" | rev | cut -d'/' -f 1 | rev`
         db_ver=`cat ~{db_kraken2}db_ver.info`
         info_text="Kraken2 v$software_ver (database version: $db_ver)"
-        echo "~{info_text}" >> ~{info_filename}
+        echo $info_text >> ~{info_filename}
 
 
 
         software_ver=`cat ~{centrifuge_info}`
         db_ver=`cat ~(dirname ~{db_centrifuge})/db_ver.info`
         info_text="Centrifuge v$software_ver (database version: $db_ver)"
-        echo "~{info_text}" >> ~{info_filename}
+        echo $info_text >> ~{info_filename}
 
 
 
         software_ver=`cat ~{gottcha2_info}`
         db_ver=`cat ~(dirname ~{db_gottcha2})/db_ver.info`
         info_text="Gottcha2 v$software_ver (database version: $db_ver)"
-        echo "~{info_text}" >> ~{info_filename}
+        echo $info_text >> ~{info_filename}
 
     >>>
 
