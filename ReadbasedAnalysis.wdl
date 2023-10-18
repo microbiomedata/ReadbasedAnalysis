@@ -287,7 +287,7 @@ task make_info_file {
 
 
         software_ver=`cat ~{centrifuge_info}`
-        db_ver=`cat ~(dirname ~{db_centrifuge})/db_ver.info`
+        db_ver=`cat $(dirname ~{db_centrifuge})/db_ver.info`
         info_text="Centrifuge v$software_ver (database version: $db_ver)"
         echo $info_text >> ~{info_filename}
 
