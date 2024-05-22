@@ -198,16 +198,16 @@ task finish_reads {
     >>>
 
     output {
-       File g2_report_tsv="${prefix}_gottcha2_report.tsv"
-       File g2_full_tsv="${prefix}_gottcha2_full_tsv"
-       File g2_krona_html="${prefix}_gottcha2_krona.html"
-       File cent_classification_tsv="${prefix}_centrifuge_classification.tsv"
-       File cent_report_tsv="${prefix}_centrifuge_report.tsv"
-       File cent_krona_html="${prefix}_centrifuge_krona.html"
-       File kr_classification_tsv="${prefix}_kraken2_classification.tsv"
-       File kr_report_tsv="${prefix}_kraken2_report.tsv"
-       File kr_krona_html="${prefix}_kraken2_krona.html"
-       File rb_info_file="${prefix}_profiler.info"
+       File g2_report_tsv="~{prefix}_gottcha2_report.tsv"
+       File g2_full_tsv="~{prefix}_gottcha2_full_tsv"
+       File g2_krona_html="~{prefix}_gottcha2_krona.html"
+       File cent_classification_tsv="~{prefix}_centrifuge_classification.tsv"
+       File cent_report_tsv="~{prefix}_centrifuge_report.tsv"
+       File cent_krona_html="~{prefix}_centrifuge_krona.html"
+       File kr_classification_tsv="~{prefix}_kraken2_classification.tsv"
+       File kr_report_tsv="~{prefix}_kraken2_report.tsv"
+       File kr_krona_html="~{prefix}_kraken2_krona.html"
+       File rb_info_file="~{prefix}_profiler.info"
     }
 
     runtime {
@@ -250,7 +250,7 @@ task make_outputs{
         cpu:  1
     }
     output{
-        Array[String] fastq_files = glob("${outdir}/*.fastq*")
+        Array[String] fastq_files = glob("~{outdir}/*.fastq*")
     }
 }
 
@@ -301,8 +301,8 @@ task make_info_file {
     >>>
 
     output {
-        File profiler_info = "${info_filename}"
-        String profiler_info_text = read_string("${info_filename}")
+        File profiler_info = "~{info_filename}"
+        String profiler_info_text = read_string("~{info_filename}")
     }
     runtime {
         docker: docker
