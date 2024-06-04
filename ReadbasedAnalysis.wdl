@@ -53,7 +53,8 @@ workflow ReadbasedAnalysis {
         }
 
     call make_info_file {
-        input: docker = docker,
+        input: 
+            docker = docker,
             db_gottcha2 = db_gottcha2,
             db_kraken2 = db_kraken2,
             db_centrifuge = db_centrifuge,
@@ -68,7 +69,7 @@ workflow ReadbasedAnalysis {
         }
 
     call finish_reads {
-            input:
+        input:
             proj=proj,
             start=stage.start,
             input_file=stage.read_in,
