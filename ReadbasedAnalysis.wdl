@@ -16,7 +16,7 @@ workflow ReadbasedAnalysis {
         String prefix=sub(proj, ":", "_")
         Boolean paired = false
         String bbtools_container="microbiomedata/bbtools:38.96"
-        String docker = "microbiomedata/nmdc_taxa_profilers:1.0.4"
+        String docker = "microbiomedata/nmdc_taxa_profilers:1.0.5"
     }
     call stage {
         input:

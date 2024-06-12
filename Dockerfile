@@ -18,10 +18,10 @@ RUN conda config --add channels conda-forge \
 
 # install gottcha2
 RUN conda install minimap2 pandas
-RUN wget https://github.com/poeli/GOTTCHA2/archive/2.1.8.1.tar.gz \
-    && tar -xzf 2.1.8.1.tar.gz \
-    && cp GOTTCHA2-2.1.8.1/*.py /usr/local/bin \
-    && rm -rf GOTTCHA2-2.1.8.1/ 2.1.8.1.zip
+RUN wget https://github.com/poeli/GOTTCHA2/archive/2.1.8.5.tar.gz \
+    && tar -xzf 2.1.8.5.tar.gz \
+    && cp GOTTCHA2-2.1.8.5/*.py /usr/local/bin \
+    && rm -rf GOTTCHA2-2.1.8.5/ 2.1.8.5.zip
 
 # install kraken2
 RUN conda install kraken2=2.1.2
