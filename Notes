@@ -1,5 +1,0 @@
-1. Validate with womtool
-2. Create imports.zip
-3. update and run submit_curl.sh
-4. Make sure a worker is running (use salloc and ~/condor_worker.sh)
-5. Check output with cq meta <job> and tail ~/perlmutter/logs/cromwell.log if things seem stuck
