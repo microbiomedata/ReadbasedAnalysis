@@ -14,10 +14,11 @@ workflow ReadbasedAnalysis {
         String input_file
         String proj
         String prefix=sub(proj, ":", "_")
-        Boolean paired = false
+        Boolean? paired = false
         String bbtools_container="microbiomedata/bbtools:38.96"
         String docker = "microbiomedata/nmdc_taxa_profilers:1.0.5"
     }
+
     call stage {
         input:
         container=bbtools_container,
@@ -103,7 +104,7 @@ workflow ReadbasedAnalysis {
     meta {
         author: "Po-E Li, B10, LANL"
         email: "po-e@lanl.gov"
-        version: "1.0.4"
+        version: "1.0.5"
     }
 }
 
