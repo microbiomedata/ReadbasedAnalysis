@@ -10,6 +10,7 @@ task profilerGottcha2 {
         Int? CPU = 4
     }
     command <<<
+
         set -euo pipefail
         . /opt/conda/etc/profile.d/conda.sh
         conda activate gottcha2
@@ -54,6 +55,7 @@ task profilerCentrifuge {
         String DOCKER
     }
     command <<<
+    
         set -euo pipefail
         . /opt/conda/etc/profile.d/conda.sh
         conda activate centrifuge
@@ -99,6 +101,7 @@ task profilerKraken2 {
     }
 
     command <<<
+
         set -euo pipefail
         . /opt/conda/etc/profile.d/conda.sh
         conda activate kraken2
@@ -169,7 +172,8 @@ task stage {
     }
 
    command <<<
-       set -e
+
+       set -oeu pipefail
        if [ ~( echo ~{input_file}|egrep -c "https*:") -gt 0 ] ; then
            wget ~{input_file} -O ~{target}
        else

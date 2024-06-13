@@ -120,7 +120,8 @@ task stage {
     }
 
    command <<<
-       set -e
+
+       set -oeu pipefail
        echo "~{target}"
        if [ $( echo ~{input_file}|egrep -c "https*:") -gt 0 ] ; then
            wget ~{input_file} -O ~{target}
@@ -167,35 +168,35 @@ task finish_reads {
 
     command <<<
 
-        set -e
+        set -oeu pipefail
         end=`date --iso-8601=seconds`
         # Set names
         if [[ $(head -2 ~{gottcha2_report_tsv}|wc -l) -eq 1 ]] ; then
             echo "Nothing found in gottcha2 for ~{proj} $end" >> ~{prefix}_gottcha2_report.tsv
         else
-            ln ~{gottcha2_report_tsv} ~{prefix}_gottcha2_report.tsv
+            ln ~{gottcha2_report_tsv} ~{prefix}_gottcha2_report.tsv || ln -s ~{gottcha2_report_tsv} ~{prefix}_gottcha2_report.tsv
         fi
-        ln ~{gottcha2_full_tsv} ~{prefix}_gottcha2_full_tsv
-        ln ~{gottcha2_krona_html} ~{prefix}_gottcha2_krona.html
+        ln ~{gottcha2_full_tsv} ~{prefix}_gottcha2_full_tsv || ln -s ~{gottcha2_full_tsv} ~{prefix}_gottcha2_full_tsv
+        ln ~{gottcha2_krona_html} ~{prefix}_gottcha2_krona.html || ln -s ~{gottcha2_krona_html} ~{prefix}_gottcha2_krona.html
 
-        ln ~{centrifuge_classification_tsv} ~{prefix}_centrifuge_classification.tsv
+        ln ~{centrifuge_classification_tsv} ~{prefix}_centrifuge_classification.tsv || ln -s ~{centrifuge_classification_tsv} ~{prefix}_centrifuge_classification.tsv
         if [[ $(head -2 ~{centrifuge_report_tsv}|wc -l) -eq 1 ]] ; then
             echo "Nothing found in centrifuge for ~{proj} $end" >> ~{prefix}_centrifuge_report.tsv
         else
-            ln ~{centrifuge_report_tsv} ~{prefix}_centrifuge_report.tsv
+            ln ~{centrifuge_report_tsv} ~{prefix}_centrifuge_report.tsv || ln -s ~{centrifuge_report_tsv} ~{prefix}_centrifuge_report.tsv
         fi
-        ln ~{centrifuge_krona_html} ~{prefix}_centrifuge_krona.html
+        ln ~{centrifuge_krona_html} ~{prefix}_centrifuge_krona.html || ln -s ~{centrifuge_krona_html} ~{prefix}_centrifuge_krona.html
 
-        ln ~{kraken2_classification_tsv} ~{prefix}_kraken2_classification.tsv
+        ln ~{kraken2_classification_tsv} ~{prefix}_kraken2_classification.tsv || ln -s ~{kraken2_classification_tsv} ~{prefix}_kraken2_classification.tsv
         if [[ $(head -2 ~{kraken2_report_tsv}|wc -l) -eq 1 ]] ; then
             echo "Nothing found in kraken2 for ~{proj} $end" >> ~{prefix}_kraken2_report.tsv
         else
-            ln ~{kraken2_report_tsv} ~{prefix}_kraken2_report.tsv
+            ln ~{kraken2_report_tsv} ~{prefix}_kraken2_report.tsv || ln -s ~{kraken2_report_tsv} ~{prefix}_kraken2_report.tsv
         fi
-        ln ~{kraken2_krona_html} ~{prefix}_kraken2_krona.html
+        ln ~{kraken2_krona_html} ~{prefix}_kraken2_krona.html || ln -s ~{kraken2_krona_html} ~{prefix}_kraken2_krona.html
 
         #info file
-        ln ~{prof_info_file} ~{prefix}_profiler.info
+        ln ~{prof_info_file} ~{prefix}_profiler.info || ln -s ~{prof_info_file} ~{prefix}_profiler.info
 
     >>>
 
@@ -236,6 +237,7 @@ task make_outputs{
     }
     command<<<
 
+        set -oeu pipefail
         mkdir -p ~{outdir}/gottcha2
         cp ~{gottcha2_report_tsv} ~{gottcha2_full_tsv} ~{gottcha2_krona_html} \
            ~{outdir}/gottcha2
@@ -272,33 +274,41 @@ task make_info_file {
         String info_filename = "profiler.info"
     }
     command <<<
-        set -euo pipefail
 
+        set -euo pipefail
         # generate output info file
 
         info_text="Taxonomy profiling tools and databases used: "
         echo $info_text > ~{info_filename}
 
+                echo $info_text > ${info_filename}
 
+        if [[ ${enabled_tools_kraken2} == true ]]
+        then
+            software_ver=`cat ${kraken2_info}`
+            #db_ver=`echo "${db_kraken2}" | rev | cut -d'/' -f 1 | rev`
+            db_ver=`cat ${db_kraken2}/db_ver.info`
+            info_text="Kraken2 v$software_ver (database version: $db_ver)"
+            echo $info_text >> ${info_filename}
+        fi
+        echo $info_text > ~{info_filename}
+
+        if [[ ${enabled_tools_centrifuge} == true ]]
+        then
+            software_ver=`cat ${centrifuge_info}`
+            db_ver=`cat $(dirname ${db_centrifuge})/db_ver.info`
+            info_text="Centrifuge v$software_ver (database version: $db_ver)"
+            echo $info_text >> ${info_filename}
+        fi
+
+        if [[ ${enabled_tools_gottcha2} == true ]]
+        then
+            software_ver=`cat ${gottcha2_info}`
+            db_ver=`cat $(dirname ${db_gottcha2})/db_ver.info`
+            info_text="Gottcha2 v$software_ver (database version: $db_ver)"
+            echo $info_text >> ${info_filename}
+        fi
         software_ver=`cat ~{kraken2_info}`
-        #db_ver=`echo "~{db_kraken2}" | rev | cut -d'/' -f 1 | rev`
-        db_ver=`cat ~{db_kraken2}db_ver.info`
-        info_text="Kraken2 v$software_ver (database version: $db_ver)"
-        echo $info_text >> ~{info_filename}
-
-
-
-        software_ver=`cat ~{centrifuge_info}`
-        db_ver=`cat $(dirname ~{db_centrifuge})/db_ver.info`
-        info_text="Centrifuge v$software_ver (database version: $db_ver)"
-        echo $info_text >> ~{info_filename}
-
-
-
-        software_ver=`cat ~{gottcha2_info}`
-        db_ver=`cat $(dirname ~{db_gottcha2})/db_ver.info`
-        info_text="Gottcha2 v$software_ver (database version: $db_ver)"
-        echo $info_text >> ~{info_filename}
 
     >>>
 
