@@ -4,7 +4,7 @@ workflow ReadbasedAnalysis {
     Boolean enabled_tools_gottcha2 = true
     Boolean enabled_tools_kraken2 = true
     Boolean enabled_tools_centrifuge = true
-    String db_gottcha2 = "/refdata/gottcha2/RefSeq-r90/gottcha_db.BAVFPt.species.fna"
+    String db_gottcha2 = "/refdata/gottcha2/RefSeq-r223/gottcha_db.BAVFPt.species.fna"
     String db_kraken2 = "/refdata/kraken2/"
     String db_centrifuge = "/refdata/centrifuge/p_compressed"
     Int cpu = 8
