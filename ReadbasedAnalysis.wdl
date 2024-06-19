@@ -7,7 +7,7 @@ workflow ReadbasedAnalysis {
         Boolean enabled_tools_gottcha2 = true
         Boolean enabled_tools_kraken2 = true
         Boolean enabled_tools_centrifuge = true
-        String db_gottcha2 = "/refdata/gottcha2/RefSeq-r90.cg.BacteriaArchaeaViruses.species.fna"
+        String db_gottcha2 = "/refdata/gottcha2/gottcha_db.BAVFPt.species.fna"
         String db_kraken2 = "/refdata/kraken2/"
         String db_centrifuge = "/refdata/centrifuge/p_compressed"
         Int cpu = 8
@@ -16,7 +16,7 @@ workflow ReadbasedAnalysis {
         String prefix=sub(proj, ":", "_")
         Boolean? paired = false
         String bbtools_container="microbiomedata/bbtools:38.96"
-        String docker = "microbiomedata/nmdc_taxa_profilers:1.0.5"
+        String? docker = "microbiomedata/nmdc_taxa_profilers:1.0.5"
     }
 
     call stage {
