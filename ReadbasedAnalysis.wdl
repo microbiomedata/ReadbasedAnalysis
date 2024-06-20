@@ -3,20 +3,20 @@ version 1.0
 import "ReadbasedAnalysisTasks.wdl" as tasks
 
 workflow ReadbasedAnalysis {
-    input {
+    input {        
         Boolean enabled_tools_gottcha2 = true
         Boolean enabled_tools_kraken2 = true
         Boolean enabled_tools_centrifuge = true
-        String db_gottcha2 = "/refdata/gottcha2/gottcha_db.BAVFPt.species.fna"
+        String db_gottcha2 = "/refdata/gottcha2/RefSeq-r223/gottcha_db.BAVFPt.species.fna"
         String db_kraken2 = "/refdata/kraken2/"
         String db_centrifuge = "/refdata/centrifuge/p_compressed"
         Int cpu = 8
         String input_file
         String proj
-        String prefix=sub(proj, ":", "_")
+        String prefix = sub(proj, ":", "_")
         Boolean? paired = false
-        String bbtools_container="microbiomedata/bbtools:38.96"
-        String? docker = "microbiomedata/nmdc_taxa_profilers:1.0.5"
+        String bbtools_container = "microbiomedata/bbtools:38.96"
+        String docker = "microbiomedata/nmdc_taxa_profilers:1.0.5"
     }
 
     call stage {
@@ -54,7 +54,10 @@ workflow ReadbasedAnalysis {
         }
 
     call make_info_file {
-        input: 
+        input:
+            enabled_tools_gottcha2 = enabled_tools_gottcha2,
+            enabled_tools_kraken2 = enabled_tools_kraken2,
+            enabled_tools_centrifuge = enabled_tools_centrifuge, 
             docker = docker,
             db_gottcha2 = db_gottcha2,
             db_kraken2 = db_kraken2,
@@ -261,6 +264,9 @@ task make_outputs{
 
 task make_info_file {
     input {
+        Boolean enabled_tools_gottcha2
+        Boolean enabled_tools_kraken2
+        Boolean enabled_tools_centrifuge
         String db_gottcha2
         String db_kraken2
         String db_centrifuge
@@ -281,32 +287,32 @@ task make_info_file {
         info_text="Taxonomy profiling tools and databases used: "
         echo $info_text > ~{info_filename}
 
-                echo $info_text > ${info_filename}
+                echo $info_text > ~{info_filename}
 
-        if [[ ${enabled_tools_kraken2} == true ]]
+        if [[ ~{enabled_tools_kraken2} == true ]]
         then
-            software_ver=`cat ${kraken2_info}`
-            #db_ver=`echo "${db_kraken2}" | rev | cut -d'/' -f 1 | rev`
-            db_ver=`cat ${db_kraken2}/db_ver.info`
+            software_ver=`cat ~{kraken2_info}`
+            #db_ver=`echo "~{db_kraken2}" | rev | cut -d'/' -f 1 | rev`
+            db_ver=`cat ~{db_kraken2}/db_ver.info`
             info_text="Kraken2 v$software_ver (database version: $db_ver)"
-            echo $info_text >> ${info_filename}
+            echo $info_text >> ~{info_filename}
         fi
         echo $info_text > ~{info_filename}
 
-        if [[ ${enabled_tools_centrifuge} == true ]]
+        if [[ ~{enabled_tools_centrifuge} == true ]]
         then
-            software_ver=`cat ${centrifuge_info}`
-            db_ver=`cat $(dirname ${db_centrifuge})/db_ver.info`
+            software_ver=`cat ~{centrifuge_info}`
+            db_ver=`cat $(dirname ~{db_centrifuge})/db_ver.info`
             info_text="Centrifuge v$software_ver (database version: $db_ver)"
-            echo $info_text >> ${info_filename}
+            echo $info_text >> ~{info_filename}
         fi
 
-        if [[ ${enabled_tools_gottcha2} == true ]]
+        if [[ ~{enabled_tools_gottcha2} == true ]]
         then
-            software_ver=`cat ${gottcha2_info}`
-            db_ver=`cat $(dirname ${db_gottcha2})/db_ver.info`
+            software_ver=`cat ~{gottcha2_info}`
+            db_ver=`cat $(dirname ~{db_gottcha2})/db_ver.info`
             info_text="Gottcha2 v$software_ver (database version: $db_ver)"
-            echo $info_text >> ${info_filename}
+            echo $info_text >> $~info_filename}
         fi
         software_ver=`cat ~{kraken2_info}`
 
