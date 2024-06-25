@@ -25,7 +25,7 @@ workflow ReadbasedAnalysis {
         input_file=input_file
     }
 
-
+    if (enabled_tools_gottcha2 == true) {
         call tasks.profilerGottcha2 {
             input: READS = stage.reads,
                    DB = db_gottcha2,
@@ -33,8 +33,9 @@ workflow ReadbasedAnalysis {
                    CPU = cpu,
                    DOCKER = docker
         }
+    }
 
-
+    if (enabled_tools_kraken2 == true) {
         call tasks.profilerKraken2 {
             input: READS = stage.reads,
                    PAIRED = paired,
@@ -43,8 +44,9 @@ workflow ReadbasedAnalysis {
                    CPU = cpu,
                    DOCKER = docker
         }
+    }
 
-
+    if (enabled_tools_centrifuge == true) {
         call tasks.profilerCentrifuge {
             input: READS = stage.reads,
                    DB = db_centrifuge,
@@ -52,6 +54,7 @@ workflow ReadbasedAnalysis {
                    CPU = cpu,
                    DOCKER = docker
         }
+    }
 
     call make_info_file {
         input:
@@ -132,7 +135,8 @@ task stage {
            ln ~{input_file} ~{target} || cp ~{input_file} ~{target}
        fi
 
-        reformat.sh -Xmx~{default="10G" memory} in=~{target} out1=~{output1} out2=~{output2}
+        reformat.sh -Xmx~{default="10G" memory} in=~{target} out1=~{output1} out2=~{output2} verifypaired=t
+        
        # Capture the start time
        date --iso-8601=seconds > start.txt
 
@@ -158,15 +162,15 @@ task finish_reads {
         String prefix=sub(proj, ":", "_")
         String start
         File prof_info_file
-        File gottcha2_report_tsv
-        File gottcha2_full_tsv
-        File gottcha2_krona_html
-        File centrifuge_classification_tsv
-        File centrifuge_report_tsv
-        File centrifuge_krona_html
-        File kraken2_classification_tsv
-        File kraken2_report_tsv
-        File kraken2_krona_html
+        File? gottcha2_report_tsv
+        File? gottcha2_full_tsv
+        File? gottcha2_krona_html
+        File? centrifuge_classification_tsv
+        File? centrifuge_report_tsv
+        File? centrifuge_krona_html
+        File? kraken2_classification_tsv
+        File? kraken2_report_tsv
+        File? kraken2_krona_html
     }
 
     command <<<
@@ -271,12 +275,12 @@ task make_info_file {
         String db_kraken2
         String db_centrifuge
         String docker
-        File gottcha2_report_tsv
-        File gottcha2_info
-        File centrifuge_report_tsv
-        File centrifuge_info
-        File kraken2_report_tsv
-        File kraken2_info
+        File? gottcha2_report_tsv
+        File? gottcha2_info
+        File? centrifuge_report_tsv
+        File? centrifuge_info
+        File? kraken2_report_tsv
+        File? kraken2_info
         String info_filename = "profiler.info"
     }
     command <<<
@@ -312,7 +316,7 @@ task make_info_file {
             software_ver=`cat ~{gottcha2_info}`
             db_ver=`cat $(dirname ~{db_gottcha2})/db_ver.info`
             info_text="Gottcha2 v$software_ver (database version: $db_ver)"
-            echo $info_text >> $~info_filename}
+            echo $info_text >> ~{info_filename}
         fi
         software_ver=`cat ~{kraken2_info}`
 
