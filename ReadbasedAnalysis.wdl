@@ -67,7 +67,6 @@ workflow ReadbasedAnalysis {
             docker = docker,
             gottcha2_info = profilerGottcha2.info,
             gottcha2_report_tsv = profilerGottcha2.report_tsv,
-            gottcha2_info = profilerGottcha2.info,
             centrifuge_report_tsv = profilerCentrifuge.report_tsv,
             centrifuge_info = profilerCentrifuge.info,
             kraken2_report_tsv = profilerKraken2.report_tsv,
