@@ -61,7 +61,6 @@ workflow ReadbasedAnalysis {
             enabled_tools_gottcha2 = enabled_tools_gottcha2,
             enabled_tools_kraken2 = enabled_tools_kraken2,
             enabled_tools_centrifuge = enabled_tools_centrifuge, 
-            docker = docker,
             db_gottcha2 = db_gottcha2,
             db_kraken2 = db_kraken2,
             db_centrifuge = db_centrifuge,
