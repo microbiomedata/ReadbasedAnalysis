@@ -1,7 +1,7 @@
 The Read-based Taxonomy Classification Workflow
 ================================================
 
-.. image:: docs/readbased_analysis_workflow.png
+.. image:: docs/rba_workflow2024.svg
    :align: center
    :scale: 50%
 
