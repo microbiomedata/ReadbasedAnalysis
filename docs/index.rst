@@ -3,7 +3,7 @@ The Read-based Taxonomy Classification (v1.0.8)
 
 .. image:: rba_workflow2024.svg
    :align: center
-   :scale: 50%
+   :scale: 25%
 
 Workflow Overview
 -----------------
