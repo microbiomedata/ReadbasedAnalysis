@@ -13,7 +13,7 @@ Workflow Availability
 ---------------------
 The workflow is available in GitHub: https://github.com/microbiomedata/ReadbasedAnalysis; the corresponding Docker image is available in DockerHub: 
 
-- `microbiomedata/nmdc_taxa_profilers: <https://hub.docker.com/r/microbiomedata/nmdc_taxa_profilers>`_
+- `microbiomedata/nmdc_taxa_profilers <https://hub.docker.com/r/microbiomedata/nmdc_taxa_profilers>`_
 
 Requirements for Execution:  
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -182,8 +182,8 @@ Below is an example of the output directory files with descriptions to the right
 Version History
 ---------------
 
-1.0.8 (release date 07/23/2024)
-1.0.1 (release date 01/14/2021; previous versions: 1.0.0)
+- 1.0.8 (release date 07/23/2024)
+- 1.0.1 (release date 01/14/2021; previous versions: 1.0.0)
 
 Point of contact
 ----------------
