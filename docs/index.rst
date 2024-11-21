@@ -93,7 +93,7 @@ Sample dataset(s):
 Input:
 ~~~~~~
 
- A JSON file containing the following information:
+A JSON file containing the following information:
 
 #. selection of profiling tools (set as true if selected)
 #. the paths to the required database(s) for the tools selected 
