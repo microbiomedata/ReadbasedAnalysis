@@ -11,7 +11,9 @@ The pipeline takes in sequencing files (single- or paired-end) and profiles them
 
 Workflow Availability
 ---------------------
-The workflow is available in GitHub: https://github.com/microbiomedata/ReadbasedAnalysis; the corresponding Docker image is available in DockerHub: https://hub.docker.com/r/microbiomedata/nmdc_taxa_profilers
+The workflow is available in GitHub: https://github.com/microbiomedata/ReadbasedAnalysis; the corresponding Docker image is available in DockerHub: 
+
+- `microbiomedata/nmdc_taxa_profilers: <https://hub.docker.com/r/microbiomedata/nmdc_taxa_profilers>`_
 
 Requirements for Execution:  
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -81,12 +83,12 @@ Sample dataset(s):
 
 - Soil microbial communities from the East River watershed near Crested Butte, Colorado, United States - ER_DNA_379 metagenome (`SRR8553641 <https://www.ncbi.nlm.nih.gov/sra/SRX5355418>`) with `metadata available in the NMDC Data Portal <https://data.microbiomedata.org/details/study/nmdc:sty-11-dcqce727>`_. This dataset has 18.3G bases
 
-    - The zipped raw fastq file is available `here <https://portal.nersc.gov/project/m3408//test_data/SRR8553641/SRR8553641.fastq.gz>`_
+  - The zipped raw fastq file is available `here <https://portal.nersc.gov/project/m3408//test_data/SRR8553641/SRR8553641.fastq.gz>`_
 
 - Zymobiomics mock-community DNA control (`SRR7877884 <https://www.ncbi.nlm.nih.gov/sra/SRX4716743>`_); this dataset is has 6.7G bases.
 
-    - The non-interleaved raw fastq files are available as `R1 <https://portal.nersc.gov/cfs/m3408/test_data/SRR7877884_1.fastq.gz>`_ and `R2 <https://portal.nersc.gov/cfs/m3408/test_data/SRR7877884_2.fastq.gz>`
-    - The interleaved raw fastq file is available `here <https://portal.nersc.gov/cfs/m3408/test_data/SRR7877884-int.fastq.gz>`_
+  - The non-interleaved raw fastq files are available as `R1 <https://portal.nersc.gov/cfs/m3408/test_data/SRR7877884_1.fastq.gz>`_ and `R2 <https://portal.nersc.gov/cfs/m3408/test_data/SRR7877884_2.fastq.gz>`
+  - The interleaved raw fastq file is available `here <https://portal.nersc.gov/cfs/m3408/test_data/SRR7877884-int.fastq.gz>`_
 
 Input: A JSON file containing the following information:
 
@@ -123,7 +125,9 @@ Input: A JSON file containing the following information:
 Output:
 ~~~~~~~
 
-The workflow creates an output JSON file and individual output sub-directories for each tool which include tabular classification results, a tabular report, and a Krona plot (html).::
+The workflow creates an output JSON file and individual output sub-directories for each tool which include tabular classification results, a tabular report, and a Krona plot (html).
+
+::
 
     ReadbasedAnalysis/
     |-- SRR7877884.json
@@ -145,20 +149,31 @@ The workflow creates an output JSON file and individual output sub-directories f
 
 Below is an example of the output directory files with descriptions to the right.
 
-========================================  ==============================================
-FileName                                  Description
-----------------------------------------  ----------------------------------------------
-SRR7877884.json	                          ReadbasedAnalysis result JSON file
-centrifuge/SRR7877884.classification.tsv  Centrifuge output read classification TSV file
-centrifuge/SRR7877884.report.tsv          Centrifuge output report TSV file
-centrifuge/SRR7877884.krona.html          Centrifuge krona plot HTML file
-gottcha2/SRR7877884.full.tsv              GOTTCHA2 detail output TSV file
-gottcha2/SRR7877884.tsv                   GOTTCHA2 output report TSV file
-gottcha2/SRR7877884.krona.html            GOTTCHA2 krona plot HTML file
-kraken2/SRR7877884.classification.tsv     Kraken2 output read classification TSV file
-kraken2/SRR7877884.report.tsv             Kraken2 output report TSV file
-kraken2/SRR7877884.krona.html             Kraken2 krona plot HTML file
-========================================  ==============================================
+.. list-table:: 
+   :header-rows: 1
+
+   * - Directory/File Name
+     - Description
+   * - SRR7877884.json
+     - ReadbasedAnalysis result JSON file
+   * - centrifuge/SRR7877884.classification.tsv
+     - Centrifuge output read classification TSV file
+   * - centrifuge/SRR7877884.report.tsv
+     - Centrifuge output report TSV file
+   * - centrifuge/SRR7877884.krona.html
+     - Centrifuge krona plot HTML file
+   * - gottcha2/SRR7877884.full.tsv
+     - GOTTCHA2 detail output TSV file
+   * - gottcha2/SRR7877884.tsv
+     - GOTTCHA2 output report TSV file
+   * - gottcha2/SRR7877884.krona.html
+     - GOTTCHA2 krona plot HTML file
+   * - kraken2/SRR7877884.classification.tsv
+     - Kraken2 output read classification TSV file
+   * - kraken2/SRR7877884.report.tsv
+     - Kraken2 output report TSV file
+   * - kraken2/SRR7877884.krona.html
+     - Kraken2 krona plot HTML file
 
 
 Version History
