@@ -90,7 +90,10 @@ Sample dataset(s):
   - The non-interleaved raw fastq files are available as `R1 <https://portal.nersc.gov/cfs/m3408/test_data/SRR7877884_1.fastq.gz>`_ and `R2 <https://portal.nersc.gov/cfs/m3408/test_data/SRR7877884_2.fastq.gz>`
   - The interleaved raw fastq file is available `here <https://portal.nersc.gov/cfs/m3408/test_data/SRR7877884-int.fastq.gz>`_
 
-Input: A JSON file containing the following information:
+Input:
+~~~~~~
+
+ A JSON file containing the following information:
 
 #. selection of profiling tools (set as true if selected)
 #. the paths to the required database(s) for the tools selected 
