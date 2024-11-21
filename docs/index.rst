@@ -79,15 +79,23 @@ This is a compressed database built from RefSeq genomes of Bacteria and Archaea.
 Sample dataset(s):
 ~~~~~~~~~~~~~~~~~~
 
-Zymobiomics mock-community DNA control (SRR7877884); this dataset is ~7 GB.
+- Soil microbial communities from the East River watershed near Crested Butte, Colorado, United States - ER_DNA_379 metagenome (`SRR8553641 <https://www.ncbi.nlm.nih.gov/sra/SRX5355418>`) with `metadata available in the NMDC Data Portal <https://data.microbiomedata.org/details/study/nmdc:sty-11-dcqce727>`_. This dataset has 18.3G bases
+
+    - The zipped raw fastq file is available `here <https://portal.nersc.gov/project/m3408//test_data/SRR8553641/SRR8553641.fastq.gz>`_
+
+- Zymobiomics mock-community DNA control (`SRR7877884 <https://www.ncbi.nlm.nih.gov/sra/SRX4716743>`_); this dataset is has 6.7G bases.
+
+    - The non-interleaved raw fastq files are available as `R1 <https://portal.nersc.gov/cfs/m3408/test_data/SRR7877884_1.fastq.gz>`_ and `R2 <https://portal.nersc.gov/cfs/m3408/test_data/SRR7877884_2.fastq.gz>`
+    - The interleaved raw fastq file is available `here <https://portal.nersc.gov/cfs/m3408/test_data/SRR7877884-int.fastq.gz>`_
 
 Input: A JSON file containing the following information:
-1. selection of profiling tools (set as true if selected)
-2. the paths to the required database(s) for the tools selected 
-3. the paths to the input fastq file(s) (paired-end data is shown; this can be the output of the Reads QC workflow in interleaved format which will be treated as single-end data.)
-4. the prefix for the output file names
-5. the path of the output directory
-6. CPU number requested for the run.
+
+#. selection of profiling tools (set as true if selected)
+#. the paths to the required database(s) for the tools selected 
+#. the paths to the input fastq file(s) (paired-end data is shown; this can be the output of the Reads QC workflow in interleaved format which will be treated as single-end data.)
+#. the prefix for the output file names
+#. the path of the output directory
+#. CPU number requested for the run.
 
 .. code-block:: JSON
 
@@ -162,4 +170,4 @@ Version History
 Point of contact
 ----------------
 
-Package maintainer: Po-E Li <po-e@lanl.gov>
+- Package maintainers: Chienchi Lo <chienchi@lanl.gov>
