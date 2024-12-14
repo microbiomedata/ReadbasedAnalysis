@@ -1,3 +1,11 @@
+:github_url: https://github.com/microbiomedata/ReadbasedAnalysis/blob/master/docs/index.rst
+
+..
+   Note: The above `github_url` field is used to force the target of the "Edit on GitHub" link
+         to be the specified URL. That makes it so the link will work, regardless of the Sphinx
+         site the file is incorporated into. You can learn more about the `github_url` field at:
+         https://sphinx-rtd-theme.readthedocs.io/en/stable/configuring.html#confval-github_url
+
 The Read-based Taxonomy Classification (v1.0.8)
 ================================================
 
