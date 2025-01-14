@@ -1,6 +1,7 @@
 {
   "ReadbasedAnalysis.input_file": "https://nmdc-edge.org/projects/KUYAOFKQW2mZJFBc/output/ReadsQC/SRR7877884-int-0.1/SRR7877884-int-0.1.anqdpht.fastq.gz",
   "ReadbasedAnalysis.paired": false,
+  "ReadbasedAnalysis.long_read": false,
   "ReadbasedAnalysis.prefix": "TEST",
   "ReadbasedAnalysis.cpu": 8,
   "ReadbasedAnalysis.proj": "TEST"

@@ -6,11 +6,11 @@ task profilerGottcha2 {
         String DB
         String PREFIX
         String? RELABD_COL = "ROLLUP_DOC"
+        Boolean? LONG_READ = false
         String DOCKER
         Int? CPU = 4
     }
     command <<<
-
         set -euo pipefail
         . /opt/conda/etc/profile.d/conda.sh
         conda activate gottcha2
@@ -20,8 +20,9 @@ task profilerGottcha2 {
                     -t ~{CPU} \
                     -o . \
                     -p ~{PREFIX} \
-                    --database ~{DB}
-        
+                    --database ~{DB} \
+                    ~{true="-np" false="" LONG_READ}
+
         grep "^species" ~{PREFIX}.tsv | ktImportTaxonomy -t 3 -m 9 -o ~{PREFIX}.krona.html - || true
 
         gottcha2.py --version > ~{PREFIX}.info
@@ -138,31 +139,31 @@ task profilerKraken2 {
     }
 }
 
-task generateSummaryJson {
-    input {
-        Array[Map[String, String]?] TSV_META_JSON
-        String PREFIX
-        String DOCKER
-    }
+# task generateSummaryJson {
+#    input {
+#        Array[Map[String, String]?] TSV_META_JSON
+#        String PREFIX
+#        String DOCKER
+#    }
 
-    command {
-        outputTsv2json.py --meta ~{write_json(TSV_META_JSON)} > ~{PREFIX}.json
-    }
-    output {
-        File summary_json = "~{PREFIX}.json"
-    }
-    runtime {
-        docker: DOCKER
-        node: 1
-        nwpn: 1
-        memory: "45G"
-        time: "04:00:00"
-    }
-    meta {
-        author: "Po-E Li, B10, LANL"
-        email: "po-e@lanl.gov"
-    }
-}
+#    command {
+#        outputTsv2json.py --meta ~{write_json(TSV_META_JSON)} > ~{PREFIX}.json
+#    }
+#    output {
+#        File summary_json = "~{PREFIX}.json"
+#    }
+#    runtime {
+#        docker: DOCKER
+#        node: 1
+#        nwpn: 1
+#        memory: "45G"
+#        time: "04:00:00"
+#    }
+#    meta {
+#        author: "Po-E Li, B10, LANL"
+#        email: "po-e@lanl.gov"
+#    }
+# }
 
 task stage {
     input {
