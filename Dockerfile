@@ -2,11 +2,11 @@ FROM continuumio/miniconda3:latest
 
 LABEL developer="Po-E Li"
 LABEL email="po-e@lanl.gov"
-LABEL version="1.0.5"
+LABEL version="1.0.8"
 LABEL software="nmdc_taxa_profilers"
 LABEL tags="metagenome, bioinformatics, NMDC, taxonomy"
 
-ENV container docker
+ENV container=docker
 
 # system updates
 RUN apt-get update --allow-releaseinfo-change \
@@ -18,32 +18,29 @@ RUN conda config --add channels conda-forge \
     && conda config --add channels bioconda
 
 # install singlem
-RUN wget https://github.com/wwood/singlem/archive/refs/tags/v0.15.0.tar.gz \
-    && tar -xzf v0.15.0.tar.gz
-RUN conda env create -n singlem -f singlem-0.15.0/singlem.yml \
-    && ln -s ${PWD}/singlem-0.15.0/bin/* /opt/conda/envs/singlem/bin/
-RUN rm -f v0.15.0.tar.gz
+RUN conda create -n singlem singlem \
+    && conda clean --all -y
 
 # install gottcha2
-RUN wget https://github.com/poeli/GOTTCHA2/archive/refs/tags/2.1.8.5.tar.gz \
-    && tar -xzf 2.1.8.5.tar.gz
-RUN conda env create -n gottcha2 -f GOTTCHA2-2.1.8.5/environment.yml \
-    && cp GOTTCHA2-2.1.8.5/gottcha/scripts/*.py /usr/local/bin
-RUN rm -rf GOTTCHA2-2.1.8.5/ 2.1.8.5.tar.gz
+RUN conda create -n gottcha2 gottcha2=2.1.8.8 \
+    && conda clean --all -y
 
 # install kraken2
-RUN conda create -n kraken2 kraken2=2.1.2
+RUN conda create -n kraken2 kraken2=2.1.2 \
+    && conda clean --all -y
 
 # install centrifuge
-RUN conda create -n centrifuge centrifuge=1.0.4_beta
+RUN conda create -n centrifuge centrifuge=1.0.4_beta \
+    && conda clean --all -y
 
 # install krona
 # The "curl" 
 RUN conda install curl krona \
+    && conda clean --all -y \
     && ktUpdateTaxonomy.sh
 
 # install additional libs
-RUN conda install pandas click
+RUN conda install pandas click && conda clean --all -y
 ADD *.py /opt/conda/bin/
 
 CMD ["/bin/bash"]

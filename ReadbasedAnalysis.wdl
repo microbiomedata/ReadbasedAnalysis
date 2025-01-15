@@ -15,8 +15,9 @@ workflow ReadbasedAnalysis {
         String proj
         String prefix = sub(proj, ":", "_")
         Boolean? paired = false
+        Boolean? long_read = false
         String bbtools_container = "microbiomedata/bbtools:38.96"
-        String docker = "microbiomedata/nmdc_taxa_profilers:1.0.5"
+        String docker = "microbiomedata/nmdc_taxa_profilers:1.0.8"
     }
 
     call stage {
@@ -30,6 +31,7 @@ workflow ReadbasedAnalysis {
             input: READS = stage.reads,
                    DB = db_gottcha2,
                    PREFIX = prefix,
+                   LONG_READ = long_read,
                    CPU = cpu,
                    DOCKER = docker
         }
