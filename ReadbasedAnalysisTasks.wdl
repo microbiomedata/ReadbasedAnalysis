@@ -24,8 +24,9 @@ task profilerGottcha2 {
                     ~{true="-np" false="" LONG_READ}
 
         grep "^species" ~{PREFIX}.tsv | ktImportTaxonomy -t 3 -m 9 -o ~{PREFIX}.krona.html - || true
-
+        
         gottcha2.py --version > ~{PREFIX}.info
+        touch ~{PREFIX}.full.tsv
     >>>
     output {
         File report_tsv = "~{PREFIX}.tsv"
