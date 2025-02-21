@@ -5,10 +5,10 @@ task profilerGottcha2 {
         Array[File] READS
         String DB
         String PREFIX
-        String? RELABD_COL = "ROLLUP_DOC"
-        Boolean? LONG_READ = false
+        String RELABD_COL = "ROLLUP_DOC"
+        Boolean LONG_READ = false
         String DOCKER
-        Int? CPU = 4
+        Int CPU = 4
     }
     command <<<
         set -euo pipefail
@@ -53,7 +53,7 @@ task profilerCentrifuge {
         Array[File] READS
         String DB
         String PREFIX
-        Int? CPU = 4
+        Int CPU = 4
         String DOCKER
     }
     command <<<
@@ -97,8 +97,8 @@ task profilerKraken2 {
         Array[File] READS
         String DB
         String PREFIX
-        Boolean? PAIRED = false
-        Int? CPU = 4
+        Boolean PAIRED = false
+        Int CPU = 4
         String DOCKER
     }
 
@@ -138,62 +138,4 @@ task profilerKraken2 {
         author: "Po-E Li, B10, LANL"
         email: "po-e@lanl.gov"
     }
-}
-
-# task generateSummaryJson {
-#    input {
-#        Array[Map[String, String]?] TSV_META_JSON
-#        String PREFIX
-#        String DOCKER
-#    }
-
-#    command {
-#        outputTsv2json.py --meta ~{write_json(TSV_META_JSON)} > ~{PREFIX}.json
-#    }
-#    output {
-#        File summary_json = "~{PREFIX}.json"
-#    }
-#    runtime {
-#        docker: DOCKER
-#        node: 1
-#        nwpn: 1
-#        memory: "45G"
-#        time: "04:00:00"
-#    }
-#    meta {
-#        author: "Po-E Li, B10, LANL"
-#        email: "po-e@lanl.gov"
-#    }
-# }
-
-task stage {
-    input {
-        String container
-        String target="raw.fastq.gz"
-        String input_file
-    }
-
-   command <<<
-
-       set -oeu pipefail
-       if [ ~( echo ~{input_file}|egrep -c "https*:") -gt 0 ] ; then
-           wget ~{input_file} -O ~{target}
-       else
-           ln ~{input_file} ~{target} || cp ~{input_file} ~{target}
-       fi
-       # Capture the start time
-       date --iso-8601=seconds > start.txt
-
-   >>>
-
-   output {
-      File read = "~{target}"
-      String start = read_string("start.txt")
-   }
-   runtime {
-     memory: "1 GiB"
-     cpu:  2
-     maxRetries: 1
-     docker: container
-   }
 }
