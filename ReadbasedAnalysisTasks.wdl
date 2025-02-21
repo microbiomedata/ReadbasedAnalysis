@@ -165,35 +165,3 @@ task profilerKraken2 {
 #        email: "po-e@lanl.gov"
 #    }
 # }
-
-task stage {
-    input {
-        String container
-        String target="raw.fastq.gz"
-        String input_file
-    }
-
-   command <<<
-
-       set -oeu pipefail
-       if [ ~( echo ~{input_file}|egrep -c "https*:") -gt 0 ] ; then
-           wget ~{input_file} -O ~{target}
-       else
-           ln ~{input_file} ~{target} || cp ~{input_file} ~{target}
-       fi
-       # Capture the start time
-       date --iso-8601=seconds > start.txt
-
-   >>>
-
-   output {
-      File read = "~{target}"
-      String start = read_string("start.txt")
-   }
-   runtime {
-     memory: "1 GiB"
-     cpu:  2
-     maxRetries: 1
-     docker: container
-   }
-}
