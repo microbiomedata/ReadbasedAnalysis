@@ -139,3 +139,29 @@ task profilerKraken2 {
         email: "po-e@lanl.gov"
     }
 }
+
+# task generateSummaryJson {
+#    input {
+#        Array[Map[String, String]?] TSV_META_JSON
+#        String PREFIX
+#        String DOCKER
+#    }
+
+#    command {
+#        outputTsv2json.py --meta ~{write_json(TSV_META_JSON)} > ~{PREFIX}.json
+#    }
+#    output {
+#        File summary_json = "~{PREFIX}.json"
+#    }
+#    runtime {
+#        docker: DOCKER
+#        node: 1
+#        nwpn: 1
+#        memory: "45G"
+#        time: "04:00:00"
+#    }
+#    meta {
+#        author: "Po-E Li, B10, LANL"
+#        email: "po-e@lanl.gov"
+#    }
+# }

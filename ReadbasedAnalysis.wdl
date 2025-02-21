@@ -23,7 +23,8 @@ workflow ReadbasedAnalysis {
     call stage {
         input:
         container=bbtools_container,
-        input_file=input_file
+        input_file=input_file,
+        paired=paired
     }
 
     if (enabled_tools_gottcha2 == true) {
@@ -114,6 +115,7 @@ task stage {
     input {
         String container
         File   input_file
+        Boolean? paired = false
         String memory = "4G"
         String target = "staged.fastq.gz"
         String output1 = "input.left.fastq.gz"
@@ -130,8 +132,10 @@ task stage {
            ln ~{input_file} ~{target} || cp ~{input_file} ~{target}
        fi
 
-        reformat.sh -Xmx~{default="10G" memory} in=~{target} out1=~{output1} out2=~{output2} verifypaired=t
-        
+       if [ "~{paired}" == "true" ]; then
+           reformat.sh -Xmx~{default="10G" memory} in=~{target} out1=~{output1} out2=~{output2} verifypaired=t
+       fi
+
        # Capture the start time
        date --iso-8601=seconds > start.txt
 
@@ -139,7 +143,7 @@ task stage {
 
    output{
       File read_in = target
-      Array[File] reads = [output1, output2]
+      Array[File] reads = if (paired == true) then [output1, output2] else [target]
       String start = read_string("start.txt")
    }
    runtime {
