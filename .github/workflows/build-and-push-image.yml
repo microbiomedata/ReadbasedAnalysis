@@ -41,6 +41,8 @@ jobs:
                   file: Dockerfile
                   push: true
                   tags: ghcr.io/microbiomedata/nmdc-bbtools:${{ steps.get_version.outputs.version }}
+            #A GitHub Action to detect changed files during a Workflow run and to commit and push them back to the GitHub repository. 
+            #By default, the commit is made in the name of "GitHub Actions" and co-authored by the user that made the last commit.
             - uses: stefanzweifel/git-auto-commit-action@v5
 
 # References:
