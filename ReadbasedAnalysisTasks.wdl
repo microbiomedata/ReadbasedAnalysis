@@ -5,10 +5,10 @@ task profilerGottcha2 {
         Array[File] READS
         String DB
         String PREFIX
-        String? RELABD_COL = "ROLLUP_DOC"
-        Boolean? LONG_READ = false
+        String RELABD_COL = "ROLLUP_DOC"
+        Boolean LONG_READ = false
         String DOCKER
-        Int? CPU = 4
+        Int CPU = 4
     }
     command <<<
         set -euo pipefail
@@ -53,7 +53,7 @@ task profilerCentrifuge {
         Array[File] READS
         String DB
         String PREFIX
-        Int? CPU = 4
+        Int CPU = 4
         String DOCKER
     }
     command <<<
@@ -97,8 +97,8 @@ task profilerKraken2 {
         Array[File] READS
         String DB
         String PREFIX
-        Boolean? PAIRED = false
-        Int? CPU = 4
+        Boolean PAIRED = false
+        Int CPU = 4
         String DOCKER
     }
 
