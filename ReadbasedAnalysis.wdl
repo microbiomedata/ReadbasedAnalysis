@@ -17,7 +17,7 @@ workflow ReadbasedAnalysis {
         Boolean? paired = false
         Boolean? long_read = false
         String bbtools_container = "microbiomedata/bbtools:38.96"
-        String docker = "ghcr.io/microbiomedata/nmdc-taxa_profilers:1.0.8""
+        String docker = "ghcr.io/microbiomedata/nmdc-taxa_profilers:1.0.8"
     }
 
     call stage {
