@@ -21,7 +21,7 @@ jobs:
                   VERSION=$(grep "version=" Dockerfile  | cut -d"=" -f 2 | sed -e 's/\"//g')
                   echo "version=${VERSION}" >> $GITHUB_OUTPUT
                   ## update the image version in wdl and it will pushed back in the end.
-                  sed -i -E "s;microbiomedata/nmdc_taxa_profilers:[0-9]+\.[0-9]+\.[0-9]+;microbiomedata/nmdc_taxa_profilers:${VERSION};" ReadbasedAnalysis.wdl 
+                  sed -i -E "s;microbiomedata/nmdc_taxa_profilers:[0-9]+\.[0-9]+\.[0-9]+;microbiomedata/nmdc-taxa_profilers:${VERSION};" ReadbasedAnalysis.wdl 
             - name: Authenticate with container registry
               uses: docker/login-action@v3
               with:
@@ -40,7 +40,7 @@ jobs:
                   context: .
                   file: Dockerfile
                   push: true
-                  tags: ghcr.io/microbiomedata/nmdc-bbtools:${{ steps.get_version.outputs.version }}
+                  tags: ghcr.io/microbiomedata/nmdc-taxa_profilers:${{ steps.get_version.outputs.version }}
             #A GitHub Action to detect changed files during a Workflow run and to commit and push them back to the GitHub repository. 
             #By default, the commit is made in the name of "GitHub Actions" and co-authored by the user that made the last commit.
             - uses: stefanzweifel/git-auto-commit-action@v5
