@@ -1,7 +1,7 @@
 {
-  "ReadbasedAnalysis.input_file": "https://nmdc-edge.org/projects/KUYAOFKQW2mZJFBc/output/ReadsQC/SRR7877884-int-0.1/SRR7877884-int-0.1.anqdpht.fastq.gz",
+  "ReadbasedAnalysis.input_file": "/pscratch/sd/n/nmdcda/jaws_outputs/vli/98943/65dc6aa5-3fdb-4822-ba3c-0ca9ad58ef48/call-LongReadsQC/LongReadsQC/7fedfc56-3c0e-4456-9d54-b9755960fd5e/call-finish_rqc/execution/nmdc_xxxxxxx_filtered.fastq.gz",
   "ReadbasedAnalysis.paired": false,
-  "ReadbasedAnalysis.long_read": false,
+  "ReadbasedAnalysis.long_read": true,
   "ReadbasedAnalysis.prefix": "TEST",
   "ReadbasedAnalysis.cpu": 8,
   "ReadbasedAnalysis.proj": "TEST"

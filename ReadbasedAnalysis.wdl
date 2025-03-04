@@ -10,12 +10,12 @@ workflow ReadbasedAnalysis {
         String db_gottcha2 = "/refdata/gottcha2/RefSeq-r223/gottcha_db.BAVFPt.species.fna"
         String db_kraken2 = "/refdata/kraken2/"
         String db_centrifuge = "/refdata/centrifuge/p_compressed"
-        Int cpu = 8
-        String input_file
+        Int    cpu = 8
+        File   input_file
         String proj
         String prefix = sub(proj, ":", "_")
-        Boolean? paired = false
-        Boolean? long_read = false
+        Boolean paired = false
+        Boolean long_read = false
         String bbtools_container = "microbiomedata/bbtools:38.96"
         String docker = "ghcr.io/microbiomedata/nmdc-taxa_profilers:1.0.8"
     }
@@ -69,18 +69,13 @@ workflow ReadbasedAnalysis {
             db_centrifuge = db_centrifuge,
             docker = docker,
             gottcha2_info = profilerGottcha2.info,
-            gottcha2_report_tsv = profilerGottcha2.report_tsv,
-            centrifuge_report_tsv = profilerCentrifuge.report_tsv,
             centrifuge_info = profilerCentrifuge.info,
-            kraken2_report_tsv = profilerKraken2.report_tsv,
             kraken2_info = profilerKraken2.info,
         }
 
     call finish_reads {
         input:
             proj=proj,
-            start=stage.start,
-            input_file=stage.read_in,
             container="microbiomedata/workflowmeta:1.1.1",
             gottcha2_report_tsv=profilerGottcha2.report_tsv,
             gottcha2_full_tsv=profilerGottcha2.full_tsv,
@@ -105,7 +100,7 @@ workflow ReadbasedAnalysis {
         File final_kraken2_report_tsv = finish_reads.kr_report_tsv
         File final_kraken2_krona_html = finish_reads.kr_krona_html
         File info_file = finish_reads.rb_info_file
-        String? info = make_info_file.profiler_info_text
+        String info = make_info_file.profiler_info_text
     }
 
     meta {
@@ -119,9 +114,9 @@ workflow ReadbasedAnalysis {
 task stage {
     input {
         String container
-        String input_file
+        File   input_file
         Boolean? paired = false
-        String? memory = "4G"
+        String memory = "4G"
         String target = "staged.fastq.gz"
         String output1 = "input.left.fastq.gz"
         String output2 = "input.right.fastq.gz"
@@ -160,12 +155,10 @@ task stage {
 
 task finish_reads {
     input {
-        String input_file
         String container
         String proj
         String prefix=sub(proj, ":", "_")
-        String start
-        File prof_info_file
+        File  prof_info_file
         File? gottcha2_report_tsv
         File? gottcha2_full_tsv
         File? gottcha2_krona_html
@@ -231,45 +224,6 @@ task finish_reads {
     }
 }
 
-
-task make_outputs{
-    input {
-        String outdir
-        File gottcha2_report_tsv
-        File gottcha2_full_tsv
-        File gottcha2_krona_html
-        File centrifuge_classification_tsv
-        File centrifuge_report_tsv
-        File centrifuge_krona_html
-        File kraken2_classification_tsv
-        File kraken2_report_tsv
-        File kraken2_krona_html
-        String container
-    }
-    command<<<
-
-        set -oeu pipefail
-        mkdir -p ~{outdir}/gottcha2
-        cp ~{gottcha2_report_tsv} ~{gottcha2_full_tsv} ~{gottcha2_krona_html} \
-           ~{outdir}/gottcha2
-        mkdir -p ~{outdir}/centrifuge
-        cp ~{centrifuge_classification_tsv} ~{centrifuge_report_tsv} ~{centrifuge_krona_html} \
-           ~{outdir}/centrifuge
-        mkdir -p ~{outdir}/kraken2
-        cp ~{kraken2_classification_tsv} ~{kraken2_report_tsv} ~{kraken2_krona_html} \
-           ~{outdir}/kraken2
-    >>>
-    runtime {
-        docker: container
-        memory: "1 GiB"
-        cpu:  1
-    }
-    output{
-        Array[String] fastq_files = glob("~{outdir}/*.fastq*")
-    }
-}
-
-
 task make_info_file {
     input {
         Boolean enabled_tools_gottcha2
@@ -279,11 +233,8 @@ task make_info_file {
         String db_kraken2
         String db_centrifuge
         String docker
-        File? gottcha2_report_tsv
         File? gottcha2_info
-        File? centrifuge_report_tsv
         File? centrifuge_info
-        File? kraken2_report_tsv
         File? kraken2_info
         String info_filename = "profiler.info"
     }
