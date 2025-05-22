@@ -6,7 +6,7 @@
          site the file is incorporated into. You can learn more about the `github_url` field at:
          https://sphinx-rtd-theme.readthedocs.io/en/stable/configuring.html#confval-github_url
 
-The Read-based Taxonomy Classification (v1.0.8)
+The Read-based Taxonomy Classification (v1.0.10)
 ================================================
 
 .. image:: rba_workflow2024.svg
@@ -14,7 +14,7 @@ The Read-based Taxonomy Classification (v1.0.8)
 
 Workflow Overview
 -----------------
-The pipeline takes in sequencing files (single- or paired-end) and profiles them using multiple taxonomic classification tools with the Cromwell as the workflow manager.
+The pipeline takes in a Illumina sequencing file (single- or paired-end) or PacBio sequencing file and profiles them using multiple taxonomic classification tools with the Cromwell as the workflow manager.
 
 Workflow Availability
 ---------------------
@@ -87,50 +87,50 @@ This is a compressed database built from RefSeq genomes of Bacteria and Archaea.
 
 Sample dataset(s):
 ~~~~~~~~~~~~~~~~~~
+**Short Reads**
 
 - Soil microbial communities from the East River watershed near Crested Butte, Colorado, United States - ER_DNA_379 metagenome (`SRR8553641 <https://www.ncbi.nlm.nih.gov/sra/SRX5355418>`_) with `metadata available in the NMDC Data Portal <https://data.microbiomedata.org/details/study/nmdc:sty-11-dcqce727>`_. This dataset has 18.3G bases
 
-  - The zipped raw fastq file is available `here <https://portal.nersc.gov/cfs/m3408/test_data/SRR8553641/SRR8553641.fastq.gz>`_
+- The zipped raw fastq file is available `here <https://portal.nersc.gov/cfs/m3408/test_data/SRR8553641/SRR8553641.fastq.gz>`_
 
 - Zymobiomics mock-community DNA control (`SRR7877884 <https://www.ncbi.nlm.nih.gov/sra/SRX4716743>`_); this `dataset <https://portal.nersc.gov/cfs/m3408/test_data/SRR7877884/>`_ is has 6.7G bases.
 
-  - The non-interleaved raw fastq files are available as `R1 <https://portal.nersc.gov/cfs/m3408/test_data/SRR7877884/SRR7877884_1.fastq.gz>`_ and `R2 <https://portal.nersc.gov/cfs/m3408/test_data/SRR7877884/SRR7877884_2.fastq.gz>`_
+- The non-interleaved raw fastq files are available as `R1 <https://portal.nersc.gov/cfs/m3408/test_data/SRR7877884/SRR7877884_1.fastq.gz>`_ and `R2 <https://portal.nersc.gov/cfs/m3408/test_data/SRR7877884/SRR7877884_2.fastq.gz>`_
   - The interleaved raw fastq file is available `here <https://portal.nersc.gov/cfs/m3408/test_data/SRR7877884/SRR7877884-int.fastq.gz>`_
   - A 10% subset of the interleaved fastq is available `here <https://portal.nersc.gov/cfs/m3408/test_data/SRR7877884/SRR7877884-int-0.1.fastq.gz>`_
+
+.. note::
+
+    If the input data is paired-end data, it must be in interleaved format. The following command will interleave the files, using the above dataset as an example:
+.. code-block:: bash    
+
+    paste <(zcat SRR7877884_1.fastq.gz | paste - - - -) <(zcat SRR7877884_2.fastq.gz | paste - - - -) | tr '\t' '\n' | gzip -c > SRR7877884-int.fastq.gz
+
+**Long Reads:**
+
+- Zymobiomics synthetic metagenome (`SRR13128014 <https://portal.nersc.gov/cfs/m3408/test_data/SRR13128014.pacbio.subsample.ccs.fastq.gz>`_); for testing we have subsampled the dataset, the original dataset is ~18GB.
 
 Input:
 ~~~~~~
 
 A JSON file containing the following information:
 
-#. selection of profiling tools (set as true if selected)
-#. the paths to the required database(s) for the tools selected 
-#. the paths to the input fastq file(s) (paired-end data is shown; this can be the output of the Reads QC workflow in interleaved format which will be treated as single-end data.)
+#. the path to the input fastq file (this can be the output of the Reads QC workflow in interleaved format which will be treated as single-end data.)
+#. if the input is paired (boolean) 
+#. if the input is long_read (boolean) 
 #. the prefix for the output file names
-#. the path of the output directory
 #. CPU number requested for the run.
+#. project id
 
 .. code-block:: JSON
 
     {
-        "ReadbasedAnalysis.enabled_tools": {
-            "gottcha2": true,
-            "kraken2": true,
-            "centrifuge": true
-        },
-        "ReadbasedAnalysis.db": {
-            "gottcha2": "/path/to/database/RefSeq-r90.cg.BacteriaArchaeaViruses.species.fna",
-            "kraken2": " /path/to/kraken2",
-            "centrifuge": "/path/to/centrifuge/p_compressed"
-        },
-        "ReadbasedAnalysis.reads": [
-            "/path/to/SRR7877884.1.fastq.gz",
-            "/path/to/SRR7877884.2.fastq.gz"
-        ],
+        "ReadbasedAnalysis.input_file": "SRR7877884-int-0.1.fastq.gz"
         "ReadbasedAnalysis.paired": true,
+        "ReadbasedAnalysis.long_read": false,
         "ReadbasedAnalysis.prefix": "SRR7877884",
-        "ReadbasedAnalysis.outdir": "/path/to/ReadbasedAnalysis",
-        "ReadbasedAnalysis.cpu": 4
+        "ReadbasedAnalysis.cpu": 8
+        "ReadbasedAnalysis.proj": "TEST"
     }
 
 Output:
@@ -190,8 +190,8 @@ Below is an example of the output directory files with descriptions to the right
 Version History
 ---------------
 
-- 1.0.8 (release date 07/23/2024)
-- 1.0.1 (release date 01/14/2021; previous versions: 1.0.0)
+- 1.0.10 (release date 03/04/2025)
+- 1.0.8 (release date 07/23/2024; previous versions: 1.0.0)
 
 Point of contact
 ----------------
