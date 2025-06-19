@@ -87,28 +87,30 @@ This is a compressed database built from RefSeq genomes of Bacteria and Archaea.
 
 Sample dataset(s):
 ~~~~~~~~~~~~~~~~~~
+For best results, using datasets that have already gone through ReadsQC is strongly encouraged.
+
 **Short Reads**
 
-- Soil microbial communities from the East River watershed near Crested Butte, Colorado, United States - ER_DNA_379 metagenome (`SRR8553641 <https://www.ncbi.nlm.nih.gov/sra/SRX5355418>`_) with `metadata available in the NMDC Data Portal <https://data.microbiomedata.org/details/study/nmdc:sty-11-dcqce727>`_. This dataset has 18.3G bases
+- Soil microbial communities from the East River watershed near Crested Butte, Colorado, United States - ER_DNA_379 metagenome (`SRR8553641 <https://www.ncbi.nlm.nih.gov/sra/SRX5355418>`_) with `metadata available in the NMDC Data Portal <https://data.microbiomedata.org/details/study/nmdc:sty-11-dcqce727>`_. This dataset has 18.3G bases.
 
-- The zipped raw fastq file is available `here <https://portal.nersc.gov/cfs/m3408/test_data/SRR8553641/SRR8553641.fastq.gz>`_
+  - The zipped raw fastq file is available `here <https://portal.nersc.gov/cfs/m3408/test_data/SRR8553641/SRR8553641.fastq.gz>`_
 
 - Zymobiomics mock-community DNA control (`SRR7877884 <https://www.ncbi.nlm.nih.gov/sra/SRX4716743>`_); this `dataset <https://portal.nersc.gov/cfs/m3408/test_data/SRR7877884/>`_ is has 6.7G bases.
 
-- The non-interleaved raw fastq files are available as `R1 <https://portal.nersc.gov/cfs/m3408/test_data/SRR7877884/SRR7877884_1.fastq.gz>`_ and `R2 <https://portal.nersc.gov/cfs/m3408/test_data/SRR7877884/SRR7877884_2.fastq.gz>`_
-  - The interleaved raw fastq file is available `here <https://portal.nersc.gov/cfs/m3408/test_data/SRR7877884/SRR7877884-int.fastq.gz>`_
-  - A 10% subset of the interleaved fastq is available `here <https://portal.nersc.gov/cfs/m3408/test_data/SRR7877884/SRR7877884-int-0.1.fastq.gz>`_
+  - The non-interleaved raw fastq files are available as `R1 <https://portal.nersc.gov/cfs/m3408/test_data/SRR7877884/SRR7877884_1.fastq.gz>`_ and `R2 <https://portal.nersc.gov/cfs/m3408/test_data/SRR7877884/SRR7877884_2.fastq.gz>`_
+  - The interleaved file is `here <https://portal.nersc.gov/cfs/m3408/test_data/SRR7877884/SRR7877884-int.fastq.gz>`_
 
-.. note::
+     - `Cleaned File <https://portal.nersc.gov/project/m3408//test_data/SRR7877884/SRR7877884_MetaG/ReadsQC/SRR7877884-int.fq.gz>`_
 
-    If the input data is paired-end data, it must be in interleaved format. The following command will interleave the files, using the above dataset as an example:
-.. code-block:: bash    
+  - A 10% subset of the interleaved file is available as a quick dataset `here <https://portal.nersc.gov/cfs/m3408/test_data/SRR7877884/SRR7877884-int-0.1.fastq.gz>`_
 
-    paste <(zcat SRR7877884_1.fastq.gz | paste - - - -) <(zcat SRR7877884_2.fastq.gz | paste - - - -) | tr '\t' '\n' | gzip -c > SRR7877884-int.fastq.gz
+     - `Cleaned File <https://portal.nersc.gov/project/m3408//test_data/SRR7877884/SRR7877884-0.1_MetaG/ReadsQC/SRR7877884-int-0.1.fastq.gz>`_
 
-**Long Reads:**
+**Long-Reads:**
 
-- Zymobiomics synthetic metagenome (`SRR13128014 <https://portal.nersc.gov/cfs/m3408/test_data/SRR13128014.pacbio.subsample.ccs.fastq.gz>`_); for testing we have subsampled the dataset, the original dataset is ~18GB.
+Zymobiomics synthetic metagenome (`SRR13128014 <https://portal.nersc.gov/cfs/m3408/test_data/SRR13128014.pacbio.subsample.ccs.fastq.gz>`_) For testing we have subsampled the dataset, the original dataset is ~18GB. 
+
+   - `Cleaned File <https://portal.nersc.gov/project/m3408//test_data/SRR13128014.pacbio.subsample/ReadsQC/SRR13128014.pacbio.subsample.fastq.gz>`_
 
 Input:
 ~~~~~~
@@ -185,6 +187,10 @@ Below is an example of the output directory files with descriptions to the right
      - Kraken2 output report TSV file
    * - kraken2/SRR7877884.krona.html
      - Kraken2 krona plot HTML file
+
+Download the example ReadbasedAnalysis output for the short-reads Illumina run SRR7877884 (10% subset) `here <https://portal.nersc.gov/project/m3408//test_data/SRR7877884/SRR7877884-0.1_MetaG/ReadbasedAnalysis/>`_.
+
+Download the example ReadbasedAnalysis output for the long-reads PacBio run SRR13128014 `here <https://portal.nersc.gov/project/m3408//test_data/SRR13128014.pacbio.subsample/ReadbasedAnalysis/>`_.
 
 
 Version History
