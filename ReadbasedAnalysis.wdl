@@ -263,7 +263,7 @@ task finish_reads {
         docker: container
         memory: "1 GiB"
         cpu:  1
-        runtime_minutes: 1400
+        runtime_minutes: 100
     }
 }
 
