@@ -40,7 +40,7 @@ task profilerGottcha2 {
         node: 1
         nwpn: 1
         memory: "45G"
-        time: "04:00:00"
+        runtime_minutes: 1400
     }
     meta {
         author: "Po-E Li, B10, LANL"
@@ -84,7 +84,7 @@ task profilerCentrifuge {
         node: 1
         nwpn: 1
         memory: "45G"
-        time: "04:00:00"
+        runtime_minutes: 1400 
     }
     meta {
         author: "Po-E Li, B10, LANL"
@@ -132,7 +132,7 @@ task profilerKraken2 {
         node: 1
         nwpn: 1
         memory: "45G"
-        time: "04:00:00"
+        runtime_minutes: 1400 
     }
     meta {
         author: "Po-E Li, B10, LANL"
