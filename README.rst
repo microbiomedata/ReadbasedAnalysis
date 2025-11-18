@@ -6,13 +6,26 @@ The Read-based Taxonomy Classification Workflow
 
 Workflow Overview
 -----------------
-The pipeline takes in sequencing files (single- or paired-end) and profiles them using multiple taxonomic classification tools with the Cromwell as the workflow manager.
+This pipeline profiles sequencing files (single- or paired-end, long- or short-read) using modular, selectable taxonomic classification tools. It supports GOTTCHA2, Kraken2, Centrifuge, and SingleM via Cromwell (WDL) and Docker, enabling scalable, reproducible metagenome analysis.
+
+Supported tools
+---------------
+
+- `GOTTCHA2 <https://github.com/poeli/GOTTCHA2>`_
+- `Kraken2 <http://ccb.jhu.edu/software/kraken2>`_
+- `Centrifuge <http://www.ccb.jhu.edu/software/centrifuge>`_
+- `SingleM <https://github.com/wwood/singlem>`_
+
+Flexible selection of one or more tools via workflow input variables. Each profiler must be enabled via JSON, and paths to reference databases are required.
+
 
 Workflow Availability
 ---------------------
 The workflow is available in GitHub: https://github.com/microbiomedata/ReadbasedAnalysis; the corresponding Docker image is available in DockerHub: 
 
 - `microbiomedata/nmdc_taxa_profilers <https://hub.docker.com/r/microbiomedata/nmdc_taxa_profilers>`_
+- `wwood/singlem:0.20.2 <https://hub.docker.com/r/wwood/singlem>`_
+- `microbiomedata/bbtools:38.96 <https://hub.docker.com/r/microbiomedata/bbtools>`_
 
 Requirements for Execution:  
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -24,7 +37,7 @@ Requirements for Execution:
 
 Hardware Requirements:
 ~~~~~~~~~~~~~~~~~~~~~~
-- Disk space: 152 GB for databases (55 GB, 89 GB, and 8 GB for GOTTCHA2, Kraken2 and Centrifuge databases, respectively)
+- Disk space: 152 GB for databases (55 GB, 89 GB, and 8 GB for GOTTCHA2, Kraken2 and Centrifuge databases, respectively). SingleM public marker database (native to SingleM container).
 - 60 GB RAM
 
 Workflow Dependencies
@@ -42,7 +55,7 @@ Third party software:
 Requisite databases:
 ~~~~~~~~~~~~~~~~~~~~
 
-The database for each tool must be downloaded and installed. These databases total 152 GB.
+The database for each tool must be downloaded and installed if you want to use that tool. These databases total 152 GB.
 
 - GOTTCHA2 database (gottcha2/):
 
@@ -106,23 +119,21 @@ A JSON file containing the following information:
 
     {
         "ReadbasedAnalysis.enabled_tools": {
-            "gottcha2": true,
-            "kraken2": true,
-            "centrifuge": true
+            "gottcha2": false,
+            "kraken2": false,
+            "centrifuge": false,
+            "singlem": true
         },
         "ReadbasedAnalysis.db": {
             "gottcha2": "/path/to/database/RefSeq-r90.cg.BacteriaArchaeaViruses.species.fna",
             "kraken2": " /path/to/kraken2",
             "centrifuge": "/path/to/centrifuge/p_compressed"
         },
-        "ReadbasedAnalysis.reads": [
-            "/path/to/SRR7877884.1.fastq.gz",
-            "/path/to/SRR7877884.2.fastq.gz"
-        ],
+        "ReadbasedAnalysis.reads": "/path/to/SRR7877884-int.fastq.gz",
         "ReadbasedAnalysis.paired": true,
-        "ReadbasedAnalysis.prefix": "SRR7877884",
-        "ReadbasedAnalysis.outdir": "/path/to/ReadbasedAnalysis",
-        "ReadbasedAnalysis.cpu": 4
+        "ReadbasedAnalysis.proj": "SRR7877884",
+        "ReadbasedAnalysis.long_read": false,
+        "ReadbasedAnalysis.cpu": 8
     }
 
 Output:
@@ -130,62 +141,47 @@ Output:
 
 The workflow creates an output JSON file and individual output sub-directories for each tool which include tabular classification results, a tabular report, and a Krona plot (html).
 
-::
-
-    ReadbasedAnalysis/
-    |-- SRR7877884.json
-    |-- centrifuge
-    |   |-- SRR7877884.classification.tsv
-    |   |-- SRR7877884.report.tsv
-    |   `-- SRR7877884.krona.html
-    |   
-    |-- gottcha2
-    |   |-- SRR7877884.full.tsv
-    |   |-- SRR7877884.krona.html
-    |   `-- SRR7877884.tsv
-    |   
-    `-- kraken2
-        |-- SRR7877884.classification.tsv
-        |-- SRR7877884.krona.html
-        `-- SRR7877884.report.tsv
-
-
-Below is an example of the output directory files with descriptions to the right.
+Below is an example of the output files with descriptions to the right.
 
 .. list-table:: 
    :header-rows: 1
 
    * - Directory/File Name
      - Description
-   * - SRR7877884.json
-     - ReadbasedAnalysis result JSON file
-   * - centrifuge/SRR7877884.classification.tsv
+   * - SRR7877884_profiler.info
+     - ReadbasedAnalysis profiler info JSON file
+   * - SRR7877884_centrifuge_classification.tsv
      - Centrifuge output read classification TSV file
-   * - centrifuge/SRR7877884.report.tsv
+   * - SRR7877884_centrifuge_report.tsv
      - Centrifuge output report TSV file
-   * - centrifuge/SRR7877884.krona.html
+   * - SRR7877884_centrifuge_krona.html
      - Centrifuge krona plot HTML file
-   * - gottcha2/SRR7877884.full.tsv
+   * - SRR7877884_gottcha2_full.tsv
      - GOTTCHA2 detail output TSV file
-   * - gottcha2/SRR7877884.tsv
+   * - SRR7877884_gottcha2_report.tsv
      - GOTTCHA2 output report TSV file
-   * - gottcha2/SRR7877884.krona.html
+   * - SRR7877884_gottcha2_krona.html
      - GOTTCHA2 krona plot HTML file
-   * - kraken2/SRR7877884.classification.tsv
+   * - SRR7877884_kraken2_classification.tsv
      - Kraken2 output read classification TSV file
-   * - kraken2/SRR7877884.report.tsv
+   * - SRR7877884_kraken2_report.tsv
      - Kraken2 output report TSV file
-   * - kraken2/SRR7877884.krona.html
+   * - SRR7877884_kraken2_krona.html
      - Kraken2 krona plot HTML file
+   * - SRR7877884_singlem_classification.tsv
+     - SingleM output read classification TSV file
+   * - SRR7877884_singlem_report.tsv
+     - SingleM output report TSV file
+   * - SRR7877884_singlem_krona.html
+     - SingleM krona plot HTML file
 
 
 Version History
 ---------------
 
-- 1.0.8 (release date 07/23/2024)
-- 1.0.1 (release date 01/14/2021; previous versions: 1.0.0)
+- 1.1.0 (release date 11/23/2025)
 
 Point of contact
 ----------------
-
+- Po-E Li, B10, LANL — po-e@lanl.gov
 - Package maintainers: Chienchi Lo <chienchi@lanl.gov>

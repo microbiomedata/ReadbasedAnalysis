@@ -207,7 +207,7 @@ task finish_reads {
             else
                 ln ~{gottcha2_report_tsv} ~{prefix}_gottcha2_report.tsv || ln -s ~{gottcha2_report_tsv} ~{prefix}_gottcha2_report.tsv
             fi
-            ln ~{gottcha2_full_tsv} ~{prefix}_gottcha2_full_tsv || ln -s ~{gottcha2_full_tsv} ~{prefix}_gottcha2_full_tsv
+            ln ~{gottcha2_full_tsv} ~{prefix}_gottcha2_full_tsv || ln -s ~{gottcha2_full_tsv} ~{prefix}_gottcha2_full.tsv
             ln ~{gottcha2_krona_html} ~{prefix}_gottcha2_krona.html || ln -s ~{gottcha2_krona_html} ~{prefix}_gottcha2_krona.html
         fi
         if [[ -f "~{centrifuge_classification_tsv}" ]]; then
@@ -245,7 +245,7 @@ task finish_reads {
 
     output {
         File? g2_report_tsv="~{prefix}_gottcha2_report.tsv"
-        File? g2_full_tsv="~{prefix}_gottcha2_full_tsv"
+        File? g2_full_tsv="~{prefix}_gottcha2_full.tsv"
         File? g2_krona_html="~{prefix}_gottcha2_krona.html"
         File? cent_classification_tsv="~{prefix}_centrifuge_classification.tsv"
         File? cent_report_tsv="~{prefix}_centrifuge_report.tsv"
