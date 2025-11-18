@@ -51,6 +51,7 @@ Third party software:
 - `GOTTCHA2 v2.1.8.5 <https://github.com/poeli/GOTTCHA2>`_  (License: `BSD-3-Clause-LANL <https://github.com/poeli/GOTTCHA2/blob/master/LICENSE>`_)
 - `Kraken2 v2.1.2 <http://ccb.jhu.edu/software/kraken2>`_ (License: `MIT <https://github.com/DerrickWood/kraken2/blob/master/LICENSE>`_)
 - `Centrifuge v1.0.4 <http://www.ccb.jhu.edu/software/centrifuge>`_ (License: `GPL-3 <https://github.com/DaehwanKimLab/centrifuge/blob/master/LICENSE>`_)
+- `SingleM v0.20.2 <https://github.com/wwood/singlem>`_ (License: `GPL-3 <https://github.com/wwood/singlem/blob/master/LICENSE.txt>`_)
 
 Requisite databases:
 ~~~~~~~~~~~~~~~~~~~~
