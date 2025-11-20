@@ -158,7 +158,7 @@ task stage {
         fi
 
         if [ "~{paired}" == "true" ]; then
-            if [ "{enabled_tools_singlem}" == "true" ]; then
+            if [ "~{enabled_tools_singlem}" == "true" ]; then
                 reformat.sh -Xmx~{default="10G" memory} in=~{target} out=~{output_int} verifypaired=t
             fi
             reformat.sh -Xmx~{default="10G" memory} in=~{target} out1=~{output1} out2=~{output2} verifypaired=t
@@ -173,7 +173,7 @@ task stage {
     output{
         File read_in = target
         Array[File] reads = if (paired == true) then [output1, output2] else [target]
-        Array[File] int_reads =  select_first([[output_int],[target]])
+        Array[File] int_reads = if (paired == true && enabled_tools_singlem == true) then [output_int] else [target]
         String start = read_string("start.txt")
     }
     runtime {
