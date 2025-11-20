@@ -28,7 +28,8 @@ workflow ReadbasedAnalysis {
         input:
         container=bbtools_container,
         input_file=input_file,
-        paired=paired
+        paired=paired,
+        enabled_tools_singlem=enabled_tools_singlem
     }
 
     if (enabled_tools_gottcha2 == true) {
@@ -65,7 +66,7 @@ workflow ReadbasedAnalysis {
 
     if (enabled_tools_singlem == true) {
         call singlem.singlem_pipeline {
-            input: in_fastq = stage.reads,
+            input: in_fastq = stage.int_reads,
                     otu_table = prefix + "_otu_table.csv",
                     n_threads = cpu,
                     long_reads = long_read,
@@ -137,11 +138,13 @@ task stage {
     input {
         String container
         File   input_file
+        Boolean enabled_tools_singlem
         Boolean? paired = false
         String memory = "4G"
         String target = "staged.fastq.gz"
         String output1 = "input.left.fastq.gz"
         String output2 = "input.right.fastq.gz"
+        String output_int = "input.int.fastq.gz"
     }
 
     command <<<
@@ -155,7 +158,11 @@ task stage {
         fi
 
         if [ "~{paired}" == "true" ]; then
+            if [ "{enabled_tools_singlem}" == "true" ]; then
+                reformat.sh -Xmx~{default="10G" memory} in=~{target} out=~{output_int} verifypaired=t
+            fi
             reformat.sh -Xmx~{default="10G" memory} in=~{target} out1=~{output1} out2=~{output2} verifypaired=t
+            
         fi
 
         # Capture the start time
@@ -166,6 +173,7 @@ task stage {
     output{
         File read_in = target
         Array[File] reads = if (paired == true) then [output1, output2] else [target]
+        Array[File] int_reads =  select_first([[output_int],[target]])
         String start = read_string("start.txt")
     }
     runtime {
