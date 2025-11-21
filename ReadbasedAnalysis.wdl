@@ -1,7 +1,6 @@
 version 1.0
 
 import "ReadbasedAnalysisTasks.wdl" as tasks
-#import "singlem.wdl" as singlem
 import "https://code.jgi.doe.gov/gaa/jgi_meta/-/raw/main/jgi_meta_wdl_sets/metagenome_singlem/singlem.wdl" as singlem
 
 workflow ReadbasedAnalysis {
@@ -140,7 +139,7 @@ task stage {
         File   input_file
         Boolean enabled_tools_singlem
         Boolean? paired = false
-        String memory = "4G"
+        String memory = "10G"
         String target = "staged.fastq.gz"
         String output1 = "input.left.fastq.gz"
         String output2 = "input.right.fastq.gz"
@@ -181,7 +180,7 @@ task stage {
         maxRetries: 1
         docker: container
         runtime_minutes: 1400
-        memory: "10 GiB"
+        memory: memory
     }
 }
 
