@@ -155,7 +155,6 @@ The workflow creates an output JSON file and individual output sub-directories f
 
 ## Point of Contact
 
-- Po-E Li, B10, LANL — po-e@lanl.gov
-- Package maintainers: Chienchi Lo
+- Package maintainers: Chienchi Lo, Po-E Li
 
 
