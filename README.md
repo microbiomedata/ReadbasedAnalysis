@@ -155,6 +155,6 @@ The workflow creates an output JSON file and individual output sub-directories f
 
 ## Point of Contact
 
-- Package maintainers: Chienchi Lo, Po-E Li
+- Package maintainers: Chienchi Lo, Po-E Li, Valerie Li
 
 

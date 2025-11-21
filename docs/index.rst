@@ -210,4 +210,4 @@ Version History
 Point of contact
 ----------------
 
-- Package maintainers: Chienchi Lo <chienchi@lanl.gov>
+- Package maintainers: Chienchi Lo <chienchi@lanl.gov>, Po-E Li<po-e@lanl.gov>, Valerie Li <vli@lanl.gov>
