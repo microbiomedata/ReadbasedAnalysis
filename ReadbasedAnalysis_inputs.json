@@ -1,8 +1,7 @@
 {
-  "ReadbasedAnalysis.input_file": "/pscratch/sd/n/nmdcda/jaws_outputs/vli/98943/65dc6aa5-3fdb-4822-ba3c-0ca9ad58ef48/call-LongReadsQC/LongReadsQC/7fedfc56-3c0e-4456-9d54-b9755960fd5e/call-finish_rqc/execution/nmdc_xxxxxxx_filtered.fastq.gz",
+  "ReadbasedAnalysis.input_file": "https://portal.nersc.gov/project/m3408//test_data/SRR13128014.pacbio.subsample/SRR13128014.pacbio.subsample.ccs.fastq.gz",
   "ReadbasedAnalysis.paired": false,
   "ReadbasedAnalysis.long_read": true,
-  "ReadbasedAnalysis.prefix": "TEST",
   "ReadbasedAnalysis.cpu": 8,
   "ReadbasedAnalysis.proj": "TEST"
 }

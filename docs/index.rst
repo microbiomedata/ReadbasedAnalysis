@@ -6,21 +6,33 @@
          site the file is incorporated into. You can learn more about the `github_url` field at:
          https://sphinx-rtd-theme.readthedocs.io/en/stable/configuring.html#confval-github_url
 
-The Read-based Taxonomy Classification (v1.0.10)
-================================================
+Metagenome Read-based Taxonomy Classification Workflow (v1.1.0)
+================================================================
 
-.. image:: rba_workflow2024.svg
+.. image:: rba_workflow2025.svg
    :align: center
 
 Workflow Overview
 -----------------
-The pipeline takes in a Illumina sequencing file (single- or paired-end) or PacBio sequencing file and profiles them using multiple taxonomic classification tools with the Cromwell as the workflow manager.
+This pipeline profiles sequencing files (single- or paired-end, long- or short-read) using modular, selectable taxonomic classification tools. It supports GOTTCHA2, Kraken2, Centrifuge, and SingleM via Cromwell (WDL) and Docker, enabling scalable, reproducible metagenome analysis.
+
+Supported tools
+---------------
+
+- `GOTTCHA2 <https://github.com/poeli/GOTTCHA2>`_
+- `Kraken2 <http://ccb.jhu.edu/software/kraken2>`_
+- `Centrifuge <http://www.ccb.jhu.edu/software/centrifuge>`_
+- `SingleM <https://github.com/wwood/singlem>`_
+
+Flexible selection of one or more tools via workflow input variables. Each profiler must be enabled via JSON, and paths to reference databases are required.
 
 Workflow Availability
 ---------------------
-The workflow is available in GitHub: https://github.com/microbiomedata/ReadbasedAnalysis; the corresponding Docker image is available in DockerHub: 
+The workflow is available in GitHub: https://github.com/microbiomedata/ReadbasedAnalysis; the corresponding Docker images are available in DockerHub: 
 
 - `microbiomedata/nmdc_taxa_profilers <https://hub.docker.com/r/microbiomedata/nmdc_taxa_profilers>`_
+- `wwood/singlem:0.20.2 <https://hub.docker.com/r/wwood/singlem>`_
+- `microbiomedata/bbtools:38.96 <https://hub.docker.com/r/microbiomedata/bbtools>`_
 
 Requirements for Execution:  
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -117,48 +129,39 @@ Input:
 
 A JSON file containing the following information:
 
-#. the path to the input fastq file (this can be the output of the Reads QC workflow in interleaved format which will be treated as single-end data.)
-#. if the input is paired (boolean) 
-#. if the input is long_read (boolean) 
-#. the prefix for the output file names
-#. CPU number requested for the run.
-#. project id
+1. Selection of profiling tools (optional, default only singlem set true)
+2. Paths to the required database(s) for the selected tools
+3. Paths to the input fastq file(s) (paired-end data shown; output of the Reads QC workflow in interleaved format can be treated as single-end.)
+4. Paired end Boolean
+5. The project name
+6. Long reads Boolean
+7. CPU number requested for the run
 
 .. code-block:: JSON
 
     {
-        "ReadbasedAnalysis.input_file": "SRR7877884-int-0.1.fastq.gz"
-        "ReadbasedAnalysis.paired": true,
-        "ReadbasedAnalysis.long_read": false,
-        "ReadbasedAnalysis.prefix": "SRR7877884",
-        "ReadbasedAnalysis.cpu": 8
-        "ReadbasedAnalysis.proj": "TEST"
+      "ReadbasedAnalysis.enabled_tools": {
+        "gottcha2": false,
+        "kraken2": false,
+        "centrifuge": false,
+        "singlem": true
+      },
+      "ReadbasedAnalysis.db": {
+        "gottcha2": "/path/to/database/RefSeq-r90.cg.BacteriaArchaeaViruses.species.fna",
+        "kraken2": "/path/to/kraken2",
+        "centrifuge": "/path/to/centrifuge/p_compressed"
+      },
+      "ReadbasedAnalysis.reads": "/path/to/SRR7877884-int.fastq.gz",
+      "ReadbasedAnalysis.paired": true,
+      "ReadbasedAnalysis.proj": "SRR7877884",
+      "ReadbasedAnalysis.long_read": false,
+      "ReadbasedAnalysis.cpu": 8
     }
 
 Output:
 ~~~~~~~
 
 The workflow creates an output JSON file and individual output sub-directories for each tool which include tabular classification results, a tabular report, and a Krona plot (html).
-
-::
-
-    ReadbasedAnalysis/
-    |-- SRR7877884.json
-    |-- centrifuge
-    |   |-- SRR7877884.classification.tsv
-    |   |-- SRR7877884.report.tsv
-    |   `-- SRR7877884.krona.html
-    |   
-    |-- gottcha2
-    |   |-- SRR7877884.full.tsv
-    |   |-- SRR7877884.krona.html
-    |   `-- SRR7877884.tsv
-    |   
-    `-- kraken2
-        |-- SRR7877884.classification.tsv
-        |-- SRR7877884.krona.html
-        `-- SRR7877884.report.tsv
-
 
 Below is an example of the output directory files with descriptions to the right.
 
@@ -167,26 +170,32 @@ Below is an example of the output directory files with descriptions to the right
 
    * - Directory/File Name
      - Description
-   * - SRR7877884.json
-     - ReadbasedAnalysis result JSON file
-   * - centrifuge/SRR7877884.classification.tsv
+   * - SRR7877884_profiler.info
+     - ReadbasedAnalysis profiler info JSON file
+   * - SRR7877884_centrifuge_classification.tsv
      - Centrifuge output read classification TSV file
-   * - centrifuge/SRR7877884.report.tsv
+   * - SRR7877884_centrifuge_report.tsv
      - Centrifuge output report TSV file
-   * - centrifuge/SRR7877884.krona.html
+   * - SRR7877884_centrifuge_krona.html
      - Centrifuge krona plot HTML file
-   * - gottcha2/SRR7877884.full.tsv
+   * - SRR7877884_gottcha2_full.tsv
      - GOTTCHA2 detail output TSV file
-   * - gottcha2/SRR7877884.tsv
+   * - SRR7877884_gottcha2_report.tsv
      - GOTTCHA2 output report TSV file
-   * - gottcha2/SRR7877884.krona.html
+   * - SRR7877884_gottcha2_krona.html
      - GOTTCHA2 krona plot HTML file
-   * - kraken2/SRR7877884.classification.tsv
+   * - SRR7877884_kraken2_classification.tsv
      - Kraken2 output read classification TSV file
-   * - kraken2/SRR7877884.report.tsv
+   * - SRR7877884_kraken2_report.tsv
      - Kraken2 output report TSV file
-   * - kraken2/SRR7877884.krona.html
+   * - SRR7877884_kraken2_krona.html
      - Kraken2 krona plot HTML file
+   * - SRR7877884_singlem_classification.tsv
+     - SingleM output read classification TSV file
+   * - SRR7877884_singlem_report.tsv
+     - SingleM output report TSV file
+   * - SRR7877884_singlem_krona.html
+     - SingleM krona plot HTML file
 
 Download the example ReadbasedAnalysis output for the short-reads Illumina run SRR7877884 (10% subset) `here <https://portal.nersc.gov/cfs/m3408/test_data/SRR7877884/SRR7877884-0.1_MetaG/ReadbasedAnalysis/>`_.
 
@@ -196,10 +205,9 @@ Download the example ReadbasedAnalysis output for the long-reads PacBio run SRR1
 Version History
 ---------------
 
-- 1.0.10 (release date 03/04/2025)
-- 1.0.8 (release date 07/23/2024; previous versions: 1.0.0)
+- 1.1.0 (release date 11/23/2025)
 
 Point of contact
 ----------------
 
-- Package maintainers: Chienchi Lo <chienchi@lanl.gov>
+- Package maintainers: Chienchi Lo <chienchi@lanl.gov>, Po-E Li<po-e@lanl.gov>, Valerie Li <vli@lanl.gov>
