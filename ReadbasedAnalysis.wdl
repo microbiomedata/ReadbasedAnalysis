@@ -16,7 +16,7 @@ workflow ReadbasedAnalysis {
         File   input_file
         String proj
         String prefix = sub(proj, ":", "_")
-        Boolean paired = false
+        Boolean paired = true
         Boolean long_read = false
         String bbtools_container = "microbiomedata/bbtools:38.96"
         String singlem_container = "wwood/singlem:0.20.2"
