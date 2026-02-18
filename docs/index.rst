@@ -62,17 +62,17 @@ Third party software:
 Requisite databases:
 ~~~~~~~~~~~~~~~~~~~~
 
-The database for each tool must be downloaded and installed. These databases total 152 GB.
+The database for each tool must be downloaded and installed. 
 
 - GOTTCHA2 database (gottcha2/):
 
-The database RefSeqr90.cg.BacteriaArchaeaViruses.species.fna contains complete genomes of bacteria, archaea and viruses from RefSeq Release 90. The following commands will download the database:
+The database gottcha_db.BAVFPt.species.fna is from RefSeq Release 223. The following commands will download the database:
 
 ::
 
-    wget https://edge-dl.lanl.gov/GOTTCHA2/RefSeq-r90.cg.BacteriaArchaeaViruses.species.tar
-    tar -xvf RefSeq-r90.cg.BacteriaArchaeaViruses.species.tar
-    rm RefSeq-r90.cg.BacteriaArchaeaViruses.species.tar
+    wget https://ref-db.edgebioinformatics.org/NMDC/GOTTCHA2_fungal/gottcha_db.BAVF.species.fna.tar 
+    tar -xvf gottcha_db.BAVF.species.fna.tar
+    rm gottcha_db.BAVF.species.fna.tar
 
 - Kraken2 database (kraken2/):
 
